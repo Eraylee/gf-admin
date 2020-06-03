@@ -6,6 +6,7 @@
 .idea/
 .settings/
 .vscode/
+config/
 vender/
 log/
 composer.lock

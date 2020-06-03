@@ -1,4 +1,4 @@
-package user
+package user_m
 
 // CreateUserReq 新增用户资料请求参数
 type CreateUserReq struct {

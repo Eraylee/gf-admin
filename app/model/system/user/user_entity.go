@@ -1,4 +1,4 @@
-package user
+package user_m
 
 import (
 	"time"
@@ -6,16 +6,22 @@ import (
 
 // Entity is the golang structure for table user.
 type Entity struct {
-	ID        int64     `json:"id" xorm:"SERIAL comment('用户ID')"`
-	Email     string    `json:"email" xorm:"email VARCHAR(50) comment('邮箱')"`
-	Phone     string    `json:"phone" xorm:"phone VARCHAR(11) comment('手机号码')"`
-	Nickname  string    `json:"nickname" xorm:"nickname VARCHAR(50) comment('昵称')"`
-	Enabled   bool      `json:"enabled" xorm:"enabled BOOL comment('启用状态')"`
-	Username  string    `json:"username" xorm:"username VARCHAR(30) comment('用户名')"`
-	Password  string    `json:"password" xorm:"password VARCHAR(50) comment('密码')"`
-	LoginIP   string    `json:"login_ip" xorm:"login_ip VARCHAR(50) comment('最后登录ip')"`
-	LoginDate time.Time `json:"login_at" xorm:"login_at comment('最后登录时间')"`
-	CreatedAt time.Time `json:"created_at" xorm:"created"`
-	UpdatedAt time.Time `json:"updated_at" xorm:"updated"`
+	ID        int64     `json:"id" xorm:"id BIGSERIAL pk"`
+	Email     string    `json:"email" xorm:"VARCHAR(50)"`
+	Phone     string    `json:"phone" xorm:"VARCHAR(11)"`
+	Nickname  string    `json:"nickname" xorm:"VARCHAR(50) notnull"`
+	Enabled   int       `json:"enabled" xorm:"TINYINT notnull"`
+	Admin     int       `json:"admin" xorm:"TINYINT notnull"`
+	Username  string    `json:"username" xorm:"VARCHAR(30) notnull"`
+	Salt      string    `json:"salt" xorm:"VARCHAR(30) notnull"`
+	Password  string    `json:"password" xorm:"VARCHAR(50) notnull"`
+	LoginIP   string    `json:"login_ip" xorm:"VARCHAR(50)"`
+	LoginDate time.Time `json:"login_at"`
+	CreatedAt time.Time `json:"created_at" xorm:"created notnull"`
+	UpdatedAt time.Time `json:"updated_at" xorm:"updated notnull" `
 	DeletedAt time.Time `json:"deleted_at" xorm:"deleted"`
+}
+
+func (Entity) TableName() string {
+	return "user"
 }
