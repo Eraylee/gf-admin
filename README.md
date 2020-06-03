@@ -1,1 +1,3 @@
-# gf-admin
+# GoFrame Project
+
+https://goframe.org
