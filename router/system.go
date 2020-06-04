@@ -2,6 +2,7 @@ package router
 
 import (
 	"gf-admin/app/controller/system/user"
+
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 )
@@ -12,7 +13,7 @@ func init() {
 		//group.Middleware(auth.Auth)
 		group.Group("/user", func(group *ghttp.RouterGroup) {
 
-			group.POST("/create", user_c.Create)
+			group.POST("/create", user.Create)
 
 		})
 

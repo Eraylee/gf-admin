@@ -1,8 +1,8 @@
-package user_c
+package user
 
 import (
-	user_m "gf-admin/app/model/system/user"
-	user_s "gf-admin/app/service/system/user"
+	userModel "gf-admin/app/model/system/user"
+	userService "gf-admin/app/service/system/user"
 	"gf-admin/library/response"
 
 	"github.com/gogf/gf/net/ghttp"
@@ -20,11 +20,11 @@ import (
 // @Router /system/user/create [post]
 // @Security ApiKeyAuth
 func Create(r *ghttp.Request) {
-	var req *user_m.CreateUserReq
+	var req *userModel.CreateUserReq
 	if err := r.Parse(&req); err != nil {
 		response.Res(r).BadRequest(err.Error())
 	}
-	id, err := user_s.Create(req)
+	id, err := userService.Create(req)
 	if err != nil {
 		response.Res(r).BadRequest(err.Error())
 	}

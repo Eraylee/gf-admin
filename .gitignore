@@ -18,3 +18,4 @@ cbuild
 main
 .vscode
 go.sum
+__debug_bin

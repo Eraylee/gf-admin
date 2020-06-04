@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"log"
 
+	menuModel "gf-admin/app/model/system/menu"
+	menuRole "gf-admin/app/model/system/menu_role"
+	roleModel "gf-admin/app/model/system/role"
+	userModel "gf-admin/app/model/system/user"
+	userRole "gf-admin/app/model/system/user_role"
+
 	"github.com/gogf/gf/frame/g"
 	_ "github.com/lib/pq"
 	"xorm.io/xorm"
-
-	"gf-admin/app/model/system/user"
 )
 
 var engine *xorm.Engine
@@ -32,7 +36,12 @@ func init() {
 		log.Printf("数据库连接错误:%v \n", err.Error())
 		return
 	}
-	err = engine.Sync2(new(user_m.Entity))
+	err = engine.Sync2(
+		new(userModel.Entity),
+		new(menuModel.Entity),
+		new(roleModel.Entity),
+		new(menuRole.Entity),
+		new(userRole.Entity))
 	if err != nil {
 		log.Printf("同步数据库错误:%v \n", err.Error())
 		return
