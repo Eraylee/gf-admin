@@ -2,8 +2,8 @@ package menu_role
 
 // Entity is the golang structure for table user.
 type Entity struct {
-	MenuID int `json:"menuId" xorm:"menu_id BIGINT notnull pk"`
-	RoleID int `json:"roleId" xorm:"role_id BIGINT notnull pk"`
+	MenuID int `json:"menuId" xorm:"menu_id BIGSERIAL pk"`
+	RoleID int `json:"roleId" xorm:"role_id BIGSERIAL pk"`
 }
 
 //TableName 表名

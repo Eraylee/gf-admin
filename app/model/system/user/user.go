@@ -1,6 +1,20 @@
 package user
 
-import "gf-admin/app/model/base"
+import (
+	"gf-admin/app/model/base"
+	"time"
+)
+
+// QueryUserReq 分页查询
+type QueryUserReq struct {
+	Username string `p:"username"`
+	Phone    string `p:"phone"`
+	Email    string `p:"email"`
+	Nickname string `p:"nickname"`
+	Enabled  string `p:"enabled"`
+
+	base.PagingQueryReq
+}
 
 // CreateUserReq 新增用户资料请求参数
 type CreateUserReq struct {
@@ -8,34 +22,41 @@ type CreateUserReq struct {
 	Phone    string `p:"phone"  v:"required|phone#请输入手机号码|请输入正确的手机号码"`
 	Email    string `p:"email"  v:"required|email#请输入邮箱地址|请输入正确的电子邮箱"`
 	Nickname string `p:"nickname" v:"required|length:1,30#请输入昵称|昵称长度为:min到:max位"`
-	Enabled  bool   `p:"enabled"`
+	Enabled  int    `p:"enabled"`
 	RoleIds  []int  `p:"roleIds"`
 }
 
-// QueryRoleReq 分页查询
-type QueryRoleReq struct {
-	Name    string `p:"name"`
-	Code    string `p:"code"`
-	Admin   string `p:"admin"`
-	Enabled string `p:"enabled"`
-
-	base.PagingQueryReq
+// UpdateUserReq 修改用户请求参数
+type UpdateUserReq struct {
+	ID       int    `p:"id"  v:"required#请输入id"`
+	Phone    string `p:"phone"  v:"phone#请输入正确的手机号码"`
+	Email    string `p:"email"  v:"email#请输入正确的电子邮箱"`
+	Nickname string `p:"nickname" v:"length:1,30#昵称长度为:min到:max位"`
+	Enabled  int    `p:"enabled"`
+	RoleIds  []int  `p:"roleIds"`
 }
 
-// CreateRoleReq 新增角色资料请求参数
-type CreateRoleReq struct {
-	Name    string `p:"name"  v:"required|length:5,30#请输入角色名称|角色名称长度:min到:max位"`
-	Code    string `p:"code"  v:"required|length:5,30#请输入角色编码|角色编码长度:min到:max位"`
-	Sort    int    `p:"sort"`
-	Admin   bool   `p:"admin"`
-	Enabled bool   `p:"enabled"`
+// UpdatePasswordReq 修改用户密码
+type UpdatePasswordReq struct {
+	Username    string `p:"username"  v:"required#请输入用户名称"`
+	OldPassword string `p:"oldPassword"  v:"required#请输入原密码"`
+	Password    string `p:"password"  v:"required#请输入新密码"`
 }
 
-// UpdateRoleReq 修改角色请求参数
-type UpdateRoleReq struct {
-	ID      int    `p:"id"  v:"required#请输入id"`
-	Name    string `p:"name"  v:"length:5,30#请输入角色名称"`
-	Sort    int    `p:"sort"`
-	Admin   bool   `p:"admin"`
-	Enabled bool   `p:"enabled"`
+// LoginReq 登录参数
+type LoginReq struct {
+	Username string `p:"username"  v:"required#请输入用户名称"`
+	Password string `p:"password"  v:"required#请输入密码"`
+}
+
+// Res 返回数据
+type Res struct {
+	ID        int       `json:"id"`         //
+	Email     string    `json:"email"`      //
+	Phone     string    `json:"phone"`      //
+	Nickname  string    `json:"nickname"`   //
+	Enabled   int       `json:"enabled"`    //
+	Username  string    `json:"username"`   //
+	CreatedAt time.Time `json:"created_at"` //
+	UpdatedAt time.Time `json:"updated_at"` //
 }

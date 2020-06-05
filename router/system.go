@@ -14,6 +14,7 @@ func init() {
 		group.Group("/user", func(group *ghttp.RouterGroup) {
 
 			group.POST("/create", user.Create)
+			group.POST("/update", user.Update)
 
 		})
 
