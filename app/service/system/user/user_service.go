@@ -112,8 +112,9 @@ func Update(req *userModel.UpdateUserReq) (int, error) {
 
 // QueryPage 分页查询
 func QueryPage(req *userModel.QueryUserReq) ([]userModel.Res, error) {
-
-	db := orm.Instance().Table(new(userModel.Entity))
+	var userEntity userModel.Entity
+	//  orderColumn , orderType :=  "created_at" , ""
+	db := orm.Instance()
 	if req.Username != "" {
 		db.Where("username like ?", "%"+req.Username+"%")
 	}
@@ -130,7 +131,7 @@ func QueryPage(req *userModel.QueryUserReq) ([]userModel.Res, error) {
 		db.Where("email = ?", req.Enabled)
 	}
 
-	total, err := db.Clone().Count()
+	total, err := db.Count(&userEntity)
 
 	if err != nil {
 		return nil, errors.New("读取行数失败")
@@ -138,13 +139,40 @@ func QueryPage(req *userModel.QueryUserReq) ([]userModel.Res, error) {
 
 	p := paging.Create(req.PageNum, req.PageSize, int(total))
 
-	// db.Select()
+	db.Select("id , email , phone , nickname , username , enabled , created_at , updated_at")
 
 	db.OrderBy(req.OrderColumn + " " + req.OrderType + " ")
 
 	db.Limit(p.PageSize, p.StartNum)
 
-	var res []userModel.Res
-	err = db.Find(&res)
+	res := make([]userModel.Res, 0)
+	err = db.Table(&userEntity).Desc("created_at").Find(&res)
 	return res, err
 }
+
+// QueryByID 通过id查询
+func QueryByID(ID int) (*userModel.Res, error) {
+	var userEntity userModel.Entity
+	var res userModel.Res
+	db := orm.Instance()
+	if _, err := db.Table(&userEntity).ID(ID).Get(&res); err != nil {
+		return nil, err
+	}
+	return &res, nil
+}
+
+// //Login 登录
+// func Login(req *userModel.LoginReq) (string, error) {
+// 	var userEntity userModel.Entity
+// 	db := orm.Instance()
+// 	if err := db.Table(&userEntity).Where("username = ?", req.Username).Find(userEntity); err != nil {
+// 		return " ", err
+// 	} else if userEntity == nil {
+// 		return " ", gerror.New("用户名或密码错误")
+// 	}
+// 	password := userEntity.Password + userEntity.Salt
+// 	if gmd5.MustEncryptString(password) != req.Password {
+// 		return " ", gerror.New("用户名或密码错误")
+// 	}
+
+// }
