@@ -23,9 +23,9 @@ type CreateRoleReq struct {
 
 // UpdateRoleReq 修改角色请求参数
 type UpdateRoleReq struct {
-	RoleID  string `p:"roleId"  v:"required#请输入roleId"`
+	ID      string `p:"id"  v:"required#请输入id"`
 	Name    string `p:"name"  v:"length:5,30#请输入角色名称"`
-	Sort    string `p:"sort"`
+	Sort    int    `p:"sort"`
 	Admin   int    `p:"admin"`
 	Enabled int    `p:"enabled"`
 }

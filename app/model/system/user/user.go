@@ -38,7 +38,6 @@ type UpdateUserReq struct {
 
 // UpdatePasswordReq 修改用户密码
 type UpdatePasswordReq struct {
-	Username    string `p:"username"  v:"required#请输入用户名称"`
 	OldPassword string `p:"oldPassword"  v:"required#请输入原密码"`
 	Password    string `p:"password"  v:"required#请输入新密码"`
 }

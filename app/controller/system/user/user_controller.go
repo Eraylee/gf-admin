@@ -5,6 +5,7 @@ import (
 	userService "gf-admin/app/service/system/user"
 	"gf-admin/library/response"
 
+	jwt "github.com/gogf/gf-jwt"
 	"github.com/gogf/gf/net/ghttp"
 )
 
@@ -69,6 +70,50 @@ func QueryPage(r *ghttp.Request) {
 		response.Res(r).BadRequest(err.Error())
 	}
 	res, err := userService.QueryPage(req)
+	if err != nil {
+		response.Res(r).BadRequest(err.Error())
+	}
+	response.Res(r).Success(res)
+}
+
+// ResetPassword 重置密码
+// @Summary 重置密码
+// @Description 重置密码
+// @Tags 系统 用户
+// @accept json
+// @Produce  json
+// @Param query id int true "model.SwagGroupAdd"
+// @Success 200 {object} response.Response
+// @Router /system/user/resetPassword [get]
+// @Security ApiKeyAuth
+func ResetPassword(r *ghttp.Request) {
+	ID := r.GetPostInt("id")
+	res, err := userService.ResetPassword(ID)
+	if err != nil {
+		response.Res(r).BadRequest(err.Error())
+	}
+	response.Res(r).Success(res)
+}
+
+// UpdatePassword 修改密码
+// @Summary 修改密码
+// @Description 修改密码
+// @Tags 系统 用户
+// @accept json
+// @Produce  json
+// @Param body data user.UpdatePasswordReq true "model.SwagGroupAdd"
+// @Success 200 {object} response.Response
+// @Router /system/user/updatePassword [post]
+// @Security ApiKeyAuth
+func UpdatePassword(r *ghttp.Request) {
+	payload := r.Get("JWT_PAYLOAD")
+	u := payload.(jwt.MapClaims)
+	ID := int(u["id"].(float64))
+	var req *userModel.UpdatePasswordReq
+	if err := r.Parse(&req); err != nil {
+		response.Res(r).BadRequest(err.Error())
+	}
+	res, err := userService.UpdatePassword(ID, req)
 	if err != nil {
 		response.Res(r).BadRequest(err.Error())
 	}

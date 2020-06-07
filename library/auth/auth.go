@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	userModel "gf-admin/app/model/system/user"
 	"gf-admin/library/orm"
 	"gf-admin/library/response"
@@ -15,13 +16,8 @@ import (
 )
 
 var (
-	// The underlying JWT middleware.
+	// GfJWTMiddleware The underlying JWT middleware.
 	GfJWTMiddleware *jwt.GfJWTMiddleware
-	// Customized login parameter validation rules.
-	ValidationRules = g.Map{
-		"username": "required",
-		"password": "required",
-	}
 )
 
 // Initialization function,
@@ -84,6 +80,8 @@ func LoginResponse(r *ghttp.Request, code int, token string, expire time.Time) {
 
 // RefreshResponse is used to get a new token no matter current token is expired or not.
 func RefreshResponse(r *ghttp.Request, code int, token string, expire time.Time) {
+	u := r.Get("JWT_PAYLOAD")
+	fmt.Printf("user is     %s \n", u)
 	response.Res(r).Success(token)
 }
 

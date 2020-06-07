@@ -11,16 +11,16 @@ import (
 func init() {
 	s := g.Server()
 	// s.BindHandler("POST:/login", auth.GfJWTMiddleware.LoginHandler)
-	s.Group("/system", func(group *ghttp.RouterGroup) {
-		group.POST("/login", auth.GfJWTMiddleware.LoginHandler)
-		group.Middleware(auth.MiddlewareAuth)
-		group.ALL("/refreshToken", auth.GfJWTMiddleware.RefreshHandler)
-		group.Group("/user", func(group *ghttp.RouterGroup) {
-
-			group.POST("/create", user.Create)
-			group.POST("/update", user.Update)
-			group.GET("/queryPage", user.QueryPage)
-
+	s.Group("/system", func(g *ghttp.RouterGroup) {
+		g.POST("/login", auth.GfJWTMiddleware.LoginHandler)
+		g.Middleware(auth.MiddlewareAuth)
+		g.ALL("/refreshToken", auth.GfJWTMiddleware.RefreshHandler)
+		g.Group("/user", func(g *ghttp.RouterGroup) {
+			g.POST("/create", user.Create)
+			g.POST("/update", user.Update)
+			g.GET("/queryPage", user.QueryPage)
+			g.GET("/resetPassword", user.ResetPassword)
+			g.POST("/updatePassword", user.UpdatePassword)
 		})
 
 	})

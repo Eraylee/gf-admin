@@ -72,11 +72,24 @@ func Create(req *userModel.CreateUserReq) (int, error) {
 func Update(req *userModel.UpdateUserReq) (int, error) {
 	session := orm.Instance().NewSession()
 	defer session.Close()
-	user := userModel.Entity{
-		Phone:    req.Phone,
-		Enabled:  req.Enabled,
-		Nickname: req.Nickname,
-		Email:    req.Email,
+	var user userModel.Entity
+	if has, err := session.ID(req.ID).Get(&user); err != nil {
+		return 0, err
+	} else if !has {
+		return 0, gerror.New("暂无用户")
+	}
+
+	if req.Email != "" {
+		user.Email = req.Email
+	}
+	if req.Nickname != "" {
+		user.Nickname = req.Nickname
+	}
+	if req.Enabled != 0 {
+		user.Enabled = req.Enabled
+	}
+	if req.Phone != "" {
+		user.Phone = req.Phone
 	}
 
 	if _, err := session.ID(req.ID).Update(&user); err != nil {
@@ -161,18 +174,47 @@ func QueryByID(ID int) (*userModel.Res, error) {
 	return &res, nil
 }
 
-// //Login 登录
-// func Login(req *userModel.LoginReq) (string, error) {
-// 	var userEntity userModel.Entity
-// 	db := orm.Instance()
-// 	if err := db.Table(&userEntity).Where("username = ?", req.Username).Find(userEntity); err != nil {
-// 		return " ", err
-// 	} else if userEntity == nil {
-// 		return " ", gerror.New("用户名或密码错误")
-// 	}
-// 	password := userEntity.Password + userEntity.Salt
-// 	if gmd5.MustEncryptString(password) != req.Password {
-// 		return " ", gerror.New("用户名或密码错误")
-// 	}
+// ResetPassword 重置密码
+func ResetPassword(ID int) (bool, error) {
+	var user userModel.Entity
+	db := orm.Instance()
 
-// }
+	if has, err := db.ID(ID).Get(&user); err != nil {
+		return false, err
+	} else if !has {
+		return false, gerror.New("用户不存在")
+	}
+
+	//生成密码
+	password := g.Cfg().GetString("app.DefaultPassword") + user.Salt
+	user.Password = gmd5.MustEncryptString(password)
+
+	if _, err := db.Update(&user); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// UpdatePassword 重置密码
+func UpdatePassword(ID int, req *userModel.UpdatePasswordReq) (bool, error) {
+	var user userModel.Entity
+	db := orm.Instance()
+
+	if has, err := db.ID(ID).Get(&user); err != nil {
+		return false, err
+	} else if !has {
+		return false, gerror.New("用户不存在")
+	}
+
+	OldPassword := req.OldPassword + user.Salt
+
+	if user.Password != gmd5.MustEncryptString(OldPassword) {
+		return false, gerror.New("原始密码不正确")
+	}
+	newPassword := req.Password + user.Salt
+	user.Password = gmd5.MustEncryptString(newPassword)
+	if _, err := db.Update(&user); err != nil {
+		return false, err
+	}
+	return true, nil
+}
