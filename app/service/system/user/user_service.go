@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"gf-admin/app/model/base"
 	userModel "gf-admin/app/model/system/user"
 	userRoleModel "gf-admin/app/model/system/user_role"
 	"gf-admin/library/orm"
@@ -140,8 +141,8 @@ func QueryPage(req *userModel.QueryUserReq) ([]userModel.Res, error) {
 	if req.Email != "" {
 		db.Where("email like ?", "%"+req.Email+"%")
 	}
-	if req.Enabled != "" {
-		db.Where("email = ?", req.Enabled)
+	if req.Enabled != 0 {
+		db.Where("enabled = ?", req.Enabled)
 	}
 
 	total, err := db.Count(&userEntity)
@@ -217,4 +218,17 @@ func UpdatePassword(ID int, req *userModel.UpdatePasswordReq) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+// Delete 删除
+func Delete(IDs *base.DeleteReq) (int64, error) {
+	var user userModel.Entity
+	db := orm.Instance()
+
+	res, err := db.Where("id = ?", IDs).Delete(&user)
+	if err != nil {
+		return 0, err
+	}
+
+	return res, nil
 }

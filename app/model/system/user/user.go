@@ -11,7 +11,7 @@ type QueryUserReq struct {
 	Phone    string `p:"phone"`
 	Email    string `p:"email"`
 	Nickname string `p:"nickname"`
-	Enabled  string `p:"enabled"`
+	Enabled  int    `p:"enabled"`
 
 	base.PagingQueryReq
 }

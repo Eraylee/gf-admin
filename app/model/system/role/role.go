@@ -6,8 +6,8 @@ import "gf-admin/app/model/base"
 type QueryRoleReq struct {
 	Name    string `p:"name"`
 	Code    string `p:"code"`
-	Admin   string `p:"admin"`
-	Enabled string `p:"enabled"`
+	Admin   int    `p:"admin"`
+	Enabled int    `p:"enabled"`
 
 	base.PagingQueryReq
 }

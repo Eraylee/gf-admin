@@ -1,6 +1,7 @@
 package user
 
 import (
+	"gf-admin/app/model/base"
 	userModel "gf-admin/app/model/system/user"
 	userService "gf-admin/app/service/system/user"
 	"gf-admin/library/response"
@@ -87,7 +88,7 @@ func QueryPage(r *ghttp.Request) {
 // @Router /system/user/resetPassword [get]
 // @Security ApiKeyAuth
 func ResetPassword(r *ghttp.Request) {
-	ID := r.GetPostInt("id")
+	ID := r.GetQueryInt("id")
 	res, err := userService.ResetPassword(ID)
 	if err != nil {
 		response.Res(r).BadRequest(err.Error())
@@ -114,6 +115,48 @@ func UpdatePassword(r *ghttp.Request) {
 		response.Res(r).BadRequest(err.Error())
 	}
 	res, err := userService.UpdatePassword(ID, req)
+	if err != nil {
+		response.Res(r).BadRequest(err.Error())
+	}
+	response.Res(r).Success(res)
+}
+
+// QuertByID 根据ID查询用户
+// @Summary 根据ID查询用户
+// @Description 根据ID查询用户
+// @Tags 系统 用户
+// @accept json
+// @Produce  json
+// @Param query id int true "model.SwagGroupAdd"
+// @Success 200 {object} response.Response
+// @Router /system/user/queryById [get]
+// @Security ApiKeyAuth
+func QuertByID(r *ghttp.Request) {
+	ID := r.GetQueryInt("id")
+	res, err := userService.QueryByID(ID)
+	if err != nil {
+		response.Res(r).BadRequest(err.Error())
+	}
+	response.Res(r).Success(res)
+}
+
+// Delete 删除用户
+// @Summary 删除用户
+// @Description 删除用户
+// @Tags 系统 用户
+// @accept json
+// @Produce  json
+// @Param query data base.DeleteReq true "model.SwagGroupAdd"
+// @Success 200 {object} response.Response
+// @Router /system/user/delete [get]
+// @Security ApiKeyAuth
+// Delete
+func Delete(r *ghttp.Request) {
+	var req base.DeleteReq
+	if err := r.Parse(&req); err != nil {
+		response.Res(r).BadRequest(err.Error())
+	}
+	res, err := userService.Delete(&req)
 	if err != nil {
 		response.Res(r).BadRequest(err.Error())
 	}
