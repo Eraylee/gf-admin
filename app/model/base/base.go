@@ -4,7 +4,7 @@ import "gf-admin/library/paging"
 
 // DeleteReq 删除参数
 type DeleteReq struct {
-	Ids []string `p:"ids"  v:"required#请输入ids"`
+	Ids []int `p:"ids"  v:"required#请输入ids"`
 }
 
 //PagingQueryReq 通用查询参数

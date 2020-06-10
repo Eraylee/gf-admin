@@ -221,14 +221,12 @@ func UpdatePassword(ID int, req *userModel.UpdatePasswordReq) (bool, error) {
 }
 
 // Delete 删除
-func Delete(IDs *base.DeleteReq) (int64, error) {
+func Delete(req *base.DeleteReq) (int64, error) {
 	var user userModel.Entity
 	db := orm.Instance()
-
-	res, err := db.Where("id = ?", IDs).Delete(&user)
+	res, err := db.In("id", req.Ids).Delete(&user)
 	if err != nil {
 		return 0, err
 	}
-
 	return res, nil
 }

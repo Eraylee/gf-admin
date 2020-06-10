@@ -16,7 +16,7 @@ import (
 // @Tags 系统 角色
 // @accept json
 // @Produce  json
-// @Param body body role.CreateRoleReq true "model.SwagGroupAdd"
+// @Param data body role.CreateRoleReq true "model.SwagGroupAdd"
 // @Success 200 {object} response.Response
 // @Router /system/role/create [post]
 // @Security ApiKeyAuth
@@ -38,7 +38,7 @@ func Create(r *ghttp.Request) {
 // @Tags 系统 角色
 // @accept json
 // @Produce  json
-// @Param body body role.UpdateRoleReq true "model.SwagGroupAdd"
+// @Param data body role.UpdateRoleReq true "model.SwagGroupAdd"
 // @Success 200 {object} response.Response
 // @Router /system/role/update [post]
 // @Security ApiKeyAuth
@@ -60,7 +60,7 @@ func Update(r *ghttp.Request) {
 // @Tags 系统 角色
 // @accept json
 // @Produce  json
-// @Param query query role.QueryRoleReq true "model.SwagGroupAdd"
+// @Param data query role.QueryRoleReq true "model.SwagGroupAdd"
 // @Success 200 {object} response.Response
 // @Router /system/role/queryPage [get]
 // @Security ApiKeyAuth
@@ -82,7 +82,7 @@ func QueryPage(r *ghttp.Request) {
 // @Tags 系统 角色
 // @accept json
 // @Produce  json
-// @Param query id int true "model.SwagGroupAdd"
+// @Param id query int true "model.SwagGroupAdd"
 // @Success 200 {object} response.Response
 // @Router /system/role/queryById [get]
 // @Security ApiKeyAuth
@@ -101,9 +101,9 @@ func QuertByID(r *ghttp.Request) {
 // @Tags 系统 角色
 // @accept json
 // @Produce  json
-// @Param query data base.DeleteReq true "model.SwagGroupAdd"
+// @Param data query base.DeleteReq true "model.SwagGroupAdd"
 // @Success 200 {object} response.Response
-// @Router /system/role/delete [get]
+// @Router /system/role/delete [post]
 // @Security ApiKeyAuth
 func Delete(r *ghttp.Request) {
 	var req base.DeleteReq

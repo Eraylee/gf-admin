@@ -23,10 +23,11 @@ var (
 // Initialization function,
 // rewrite this function to customized your own JWT settings.
 func init() {
+
 	authMiddleware, err := jwt.New(&jwt.GfJWTMiddleware{
 		Realm:           "test zone",
-		Key:             []byte("secret key"),
-		Timeout:         time.Minute * 5,
+		Key:             g.Cfg().GetBytes("app.JwtSecret"),
+		Timeout:         g.Cfg().GetDuration("app.JwtExpiresin") * time.Minute,
 		MaxRefresh:      time.Minute * 5,
 		IdentityKey:     "id",
 		TokenLookup:     "header: Authorization, query: token, cookie: jwt",
@@ -88,6 +89,16 @@ func RefreshResponse(r *ghttp.Request, code int, token string, expire time.Time)
 // Authenticator is used to validate login parameters.
 // It must return user data as user identifier, it will be stored in Claim Array.
 // Check error (e) to determine the appropriate error message.
+// Delete 登录
+// @Summary 登录
+// @Description 登录
+// @Tags 系统
+// @accept json
+// @Produce  json
+// @Param data body user.LoginReq true "model.SwagGroupAdd"
+// @Success 200 {object} response.Response
+// @Router /system/login [post]
+// @Security ApiKeyAuth
 func Authenticator(r *ghttp.Request) (interface{}, error) {
 	var req *userModel.LoginReq
 	if err := r.Parse(&req); err != nil {

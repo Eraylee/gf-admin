@@ -83,7 +83,7 @@ func QueryPage(r *ghttp.Request) {
 // @Tags 系统 用户
 // @accept json
 // @Produce  json
-// @Param query id int true "model.SwagGroupAdd"
+// @Param id query int true "model.SwagGroupAdd"
 // @Success 200 {object} response.Response
 // @Router /system/user/resetPassword [get]
 // @Security ApiKeyAuth
@@ -102,7 +102,7 @@ func ResetPassword(r *ghttp.Request) {
 // @Tags 系统 用户
 // @accept json
 // @Produce  json
-// @Param body data user.UpdatePasswordReq true "model.SwagGroupAdd"
+// @Param data body user.UpdatePasswordReq true "model.SwagGroupAdd"
 // @Success 200 {object} response.Response
 // @Router /system/user/updatePassword [post]
 // @Security ApiKeyAuth
@@ -127,7 +127,7 @@ func UpdatePassword(r *ghttp.Request) {
 // @Tags 系统 用户
 // @accept json
 // @Produce  json
-// @Param query id int true "model.SwagGroupAdd"
+// @Param id query int true "model.SwagGroupAdd"
 // @Success 200 {object} response.Response
 // @Router /system/user/queryById [get]
 // @Security ApiKeyAuth
@@ -146,9 +146,9 @@ func QuertByID(r *ghttp.Request) {
 // @Tags 系统 用户
 // @accept json
 // @Produce  json
-// @Param query data base.DeleteReq true "model.SwagGroupAdd"
+// @Param data query base.DeleteReq true "model.SwagGroupAdd"
 // @Success 200 {object} response.Response
-// @Router /system/user/delete [get]
+// @Router /system/user/delete [post]
 // @Security ApiKeyAuth
 // Delete
 func Delete(r *ghttp.Request) {

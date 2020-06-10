@@ -107,14 +107,12 @@ func QueryByID(ID int) (*roleModel.Entity, error) {
 }
 
 // Delete 删除
-func Delete(IDs *base.DeleteReq) (int64, error) {
+func Delete(req *base.DeleteReq) (int64, error) {
 	var role roleModel.Entity
 	db := orm.Instance()
-
-	res, err := db.Where("id = ?", IDs).Delete(&role)
+	res, err := db.In("id", req.Ids).Delete(&role)
 	if err != nil {
 		return 0, err
 	}
-
 	return res, nil
 }

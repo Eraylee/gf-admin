@@ -21,6 +21,7 @@ func init() {
 		g.Group("/user", func(g *ghttp.RouterGroup) {
 			g.POST("/create", user.Create)
 			g.POST("/update", user.Update)
+			g.POST("/delete", user.Delete)
 			g.GET("/queryPage", user.QueryPage)
 			g.GET("/queryById", user.QuertByID)
 			g.GET("/resetPassword", user.ResetPassword)
@@ -30,6 +31,7 @@ func init() {
 		g.Group("/role", func(g *ghttp.RouterGroup) {
 			g.POST("/create", role.Create)
 			g.POST("/update", role.Update)
+			g.POST("/delete", role.Delete)
 			g.GET("/queryPage", role.QueryPage)
 			g.GET("/queryById", role.QuertByID)
 		})
