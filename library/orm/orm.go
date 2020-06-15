@@ -5,7 +5,7 @@ import (
 	"log"
 
 	menuModel "gf-admin/app/model/system/menu"
-	menuRole "gf-admin/app/model/system/menu_role"
+	menuRoleModel "gf-admin/app/model/system/menu_role"
 	roleModel "gf-admin/app/model/system/role"
 	userModel "gf-admin/app/model/system/user"
 	userRole "gf-admin/app/model/system/user_role"
@@ -40,7 +40,7 @@ func init() {
 		new(userModel.Entity),
 		new(menuModel.Entity),
 		new(roleModel.Entity),
-		new(menuRole.Entity),
+		new(menuRoleModel.Entity),
 		new(userRole.Entity))
 	if err != nil {
 		log.Printf("同步数据库错误:%v \n", err.Error())

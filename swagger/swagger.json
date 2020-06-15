@@ -47,6 +47,316 @@
                 }
             }
         },
+        "/system/menu/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "创建",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统 菜单"
+                ],
+                "summary": "创建",
+                "parameters": [
+                    {
+                        "description": "model.SwagGroupAdd",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/menu.CreateMenuReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/menu/delete": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "删除菜单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统 菜单"
+                ],
+                "summary": "删除菜单",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "name": "ids",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/menu/queryById": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "根据ID查询菜单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统 菜单"
+                ],
+                "summary": "根据ID查询菜单",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "model.SwagGroupAdd",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/menu/queryPage": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "分页查询",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统 菜单"
+                ],
+                "summary": "分页查询",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "enabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "orderColumn",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序方式",
+                        "name": "orderType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "当前页码",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "parentID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "target",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "type",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/menu/update": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "创建",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统 菜单"
+                ],
+                "summary": "创建",
+                "parameters": [
+                    {
+                        "description": "model.SwagGroupAdd",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/menu.UpdateMenuReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/role/cancelMenuConnect": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "取消关联",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统 角色"
+                ],
+                "summary": "取消关联",
+                "parameters": [
+                    {
+                        "description": "model.SwagGroupAdd",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/menu_role.CancelConnectReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/role/cancelUserConnect": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "取消关联",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统 角色"
+                ],
+                "summary": "取消关联",
+                "parameters": [
+                    {
+                        "description": "model.SwagGroupAdd",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user_role.CancelConnectReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/system/role/create": {
             "post": {
                 "security": [
@@ -108,7 +418,7 @@
                     {
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "type": "integer"
                         },
                         "name": "ids",
                         "in": "query"
@@ -335,7 +645,7 @@
                     {
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "type": "integer"
                         },
                         "name": "ids",
                         "in": "query"
@@ -590,7 +900,130 @@
                 "ids": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "menu.CreateMenuReq": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "integer"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parentID": {
+                    "type": "integer"
+                },
+                "permission": {
+                    "type": "string"
+                },
+                "roleIDs": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "target": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "menu.QueryMenuReq": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "orderColumn": {
+                    "description": "排序字段",
+                    "type": "string"
+                },
+                "orderType": {
+                    "description": "排序方式",
+                    "type": "string"
+                },
+                "pageNum": {
+                    "description": "当前页码",
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "description": "每页数",
+                    "type": "integer"
+                },
+                "parentID": {
+                    "type": "integer"
+                },
+                "target": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "menu.UpdateMenuReq": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "integer"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parentID": {
+                    "type": "integer"
+                },
+                "permission": {
+                    "type": "string"
+                },
+                "roleIDs": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "target": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "menu_role.CancelConnectReq": {
+            "type": "object",
+            "properties": {
+                "menuID": {
+                    "type": "integer"
+                },
+                "roleIDs": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
                     }
                 }
             }
@@ -697,7 +1130,7 @@
                 "phone": {
                     "type": "string"
                 },
-                "roleIds": {
+                "roleIDs": {
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -784,11 +1217,25 @@
                 "phone": {
                     "type": "string"
                 },
-                "roleIds": {
+                "roleIDs": {
                     "type": "array",
                     "items": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "user_role.CancelConnectReq": {
+            "type": "object",
+            "properties": {
+                "roleIDs": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "userID": {
+                    "type": "integer"
                 }
             }
         }

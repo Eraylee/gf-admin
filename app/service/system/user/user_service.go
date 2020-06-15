@@ -45,10 +45,10 @@ func Create(req *userModel.CreateUserReq) (int, error) {
 		return 0, err
 	}
 
-	if len(req.RoleIds) > 0 {
+	if len(req.RoleIDs) > 0 {
 		userRoles := make([]userRoleModel.Entity, 0)
-		for i := range req.RoleIds {
-			roleID := req.RoleIds[i]
+		for i := range req.RoleIDs {
+			roleID := req.RoleIDs[i]
 			if roleID != 0 {
 				userRole := userRoleModel.Entity{
 					UserID: user.ID,
@@ -97,10 +97,10 @@ func Update(req *userModel.UpdateUserReq) (int, error) {
 		return 0, err
 	}
 
-	if len(req.RoleIds) > 0 {
+	if len(req.RoleIDs) > 0 {
 		userRoles := make([]userRoleModel.Entity, 0)
-		for i := range req.RoleIds {
-			roleID := req.RoleIds[i]
+		for i := range req.RoleIDs {
+			roleID := req.RoleIDs[i]
 			if roleID != 0 {
 				userRole := userRoleModel.Entity{
 					UserID: req.ID,

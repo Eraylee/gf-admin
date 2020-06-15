@@ -1,6 +1,7 @@
 package router
 
 import (
+	"gf-admin/app/controller/system/menu"
 	"gf-admin/app/controller/system/role"
 	"gf-admin/app/controller/system/user"
 	"gf-admin/library/auth"
@@ -19,22 +20,32 @@ func init() {
 		g.ALL("/refreshToken", auth.GfJWTMiddleware.RefreshHandler)
 
 		g.Group("/user", func(g *ghttp.RouterGroup) {
-			g.POST("/create", user.Create)
-			g.POST("/update", user.Update)
-			g.POST("/delete", user.Delete)
+
 			g.GET("/queryPage", user.QueryPage)
 			g.GET("/queryById", user.QuertByID)
 			g.GET("/resetPassword", user.ResetPassword)
+			g.POST("/create", user.Create)
+			g.POST("/update", user.Update)
+			g.POST("/delete", user.Delete)
 			g.POST("/updatePassword", user.UpdatePassword)
 		})
 
 		g.Group("/role", func(g *ghttp.RouterGroup) {
+			g.GET("/queryPage", role.QueryPage)
+			g.GET("/queryById", role.QuertByID)
 			g.POST("/create", role.Create)
 			g.POST("/update", role.Update)
 			g.POST("/delete", role.Delete)
-			g.GET("/queryPage", role.QueryPage)
-			g.GET("/queryById", role.QuertByID)
+			g.POST("/cancelUserConnect", role.CancelUserConnect)
+			g.POST("/cancelMenuConnect", role.CancelMenuConnect)
+		})
+
+		g.Group("/menu", func(g *ghttp.RouterGroup) {
+			g.GET("/queryPage", menu.QueryPage)
+			g.GET("/queryById", menu.QuertByID)
+			g.POST("/create", menu.Create)
+			g.POST("/update", menu.Update)
+			g.POST("/delete", menu.Delete)
 		})
 	})
-
 }

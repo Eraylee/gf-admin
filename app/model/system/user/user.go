@@ -23,7 +23,7 @@ type CreateUserReq struct {
 	Email    string `p:"email"  v:"required|email#请输入邮箱地址|请输入正确的电子邮箱"`
 	Nickname string `p:"nickname" v:"required|length:1,30#请输入昵称|昵称长度为:min到:max位"`
 	Enabled  int    `p:"enabled"`
-	RoleIds  []int  `p:"roleIds"`
+	RoleIDs  []int  `p:"roleIds"`
 }
 
 // UpdateUserReq 修改用户请求参数
@@ -33,7 +33,7 @@ type UpdateUserReq struct {
 	Email    string `p:"email"  v:"email#请输入正确的电子邮箱"`
 	Nickname string `p:"nickname" v:"length:1,30#昵称长度为:min到:max位"`
 	Enabled  int    `p:"enabled"`
-	RoleIds  []int  `p:"roleIds"`
+	RoleIDs  []int  `p:"roleIds"`
 }
 
 // UpdatePasswordReq 修改用户密码

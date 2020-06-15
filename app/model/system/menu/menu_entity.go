@@ -6,7 +6,6 @@ import "time"
 type Entity struct {
 	ID        int       `json:"id" xorm:"id BIGSERIAL pk"`
 	Name      string    `json:"name" xorm:"VARCHAR(30) notnull"`
-	Code      string    `json:"code" xorm:"VARCHAR(30) notnull"`
 	Sort      int       `json:"sort" xorm:"INT notnull"`
 	Enabled   int       `json:"enabled" xorm:"TINYINT notnull"`
 	Admin     int       `json:"admin" xorm:"TINYINT notnull"`

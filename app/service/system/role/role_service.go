@@ -3,7 +3,9 @@ package role
 import (
 	"errors"
 	"gf-admin/app/model/base"
+	menuRoleModel "gf-admin/app/model/system/menu_role"
 	roleModel "gf-admin/app/model/system/role"
+	userRoleModel "gf-admin/app/model/system/user_role"
 	"gf-admin/library/orm"
 	"gf-admin/library/paging"
 
@@ -115,4 +117,24 @@ func Delete(req *base.DeleteReq) (int64, error) {
 		return 0, err
 	}
 	return res, nil
+}
+
+// CancelConnectByUserID a取消关联
+func CancelConnectByUserID(req *userRoleModel.CancelConnectReq) (bool, error) {
+	var userRole userRoleModel.Entity
+	db := orm.Instance()
+	if _, err := db.Where("user_id = ? AND role_id in (?)", req.UserID, req.RoleIDs).Delete(&userRole); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// CancelConnectByMenuID 取消关联
+func CancelConnectByMenuID(req *menuRoleModel.CancelConnectReq) (bool, error) {
+	var menuRole menuRoleModel.Entity
+	db := orm.Instance()
+	if _, err := db.Where("menu_id = ? AND role_id in (?)", req.MenuID, req.RoleIDs).Delete(&menuRole); err != nil {
+		return false, err
+	}
+	return true, nil
 }
