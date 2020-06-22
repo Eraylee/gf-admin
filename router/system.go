@@ -37,7 +37,6 @@ func init() {
 			g.POST("/update", role.Update)
 			g.POST("/delete", role.Delete)
 			g.POST("/cancelUserConnect", role.CancelUserConnect)
-			g.POST("/cancelMenuConnect", role.CancelMenuConnect)
 		})
 
 		g.Group("/menu", func(g *ghttp.RouterGroup) {
@@ -46,6 +45,7 @@ func init() {
 			g.POST("/create", menu.Create)
 			g.POST("/update", menu.Update)
 			g.POST("/delete", menu.Delete)
+			g.POST("/cancelMenuConnect", menu.CancelMenuConnect)
 		})
 	})
 }

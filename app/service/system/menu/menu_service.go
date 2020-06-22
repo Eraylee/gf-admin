@@ -3,7 +3,7 @@ package menu
 import (
 	"gf-admin/app/model/base"
 	menuModel "gf-admin/app/model/system/menu"
-	menuRoleModel "gf-admin/app/model/system/menu_role"
+	menuRoleModel "gf-admin/app/model/system/role_menu"
 	"gf-admin/library/orm"
 	"gf-admin/library/paging"
 
@@ -12,13 +12,7 @@ import (
 
 // Create 创建
 func Create(req *menuModel.CreateMenuReq) (int, error) {
-	session := orm.Instance().NewSession()
-	defer session.Close()
-	// add Begin() before any action
-	if err := session.Begin(); err != nil {
-		return 0, err
-	}
-
+	db := orm.Instance()
 	menu := menuModel.Entity{
 		Name:     req.Name,
 		Sort:     req.Sort,
@@ -29,29 +23,8 @@ func Create(req *menuModel.CreateMenuReq) (int, error) {
 		Target:   req.Target,
 	}
 
-	if _, err := session.Insert(&menu); err != nil {
+	if _, err := db.Insert(&menu); err != nil {
 		return 0, err
-	}
-
-	if len(req.RoleIDs) > 0 {
-		menuRoles := make([]menuRoleModel.Entity, 0)
-		for i := range req.RoleIDs {
-			roleID := req.RoleIDs[i]
-			if roleID != 0 {
-				userRole := menuRoleModel.Entity{
-					MenuID: menu.ID,
-					RoleID: roleID,
-				}
-				menuRoles = append(menuRoles, userRole)
-			}
-		}
-
-		if len(menuRoles) > 0 {
-			if _, err := session.Insert(menuRoles); err != nil {
-				return 0, err
-			}
-		}
-
 	}
 
 	return menu.ID, nil
@@ -59,15 +32,10 @@ func Create(req *menuModel.CreateMenuReq) (int, error) {
 
 // Update 更新
 func Update(req *menuModel.UpdateMenuReq) (int, error) {
-	session := orm.Instance().NewSession()
-
-	defer session.Close()
-	// add Begin() before any action
-	if err := session.Begin(); err != nil {
-		return 0, err
-	}
+	db := orm.Instance()
 	var menu menuModel.Entity
-	if has, err := session.ID(req.ID).Get(&menu); err != nil {
+
+	if has, err := db.ID(req.ID).Get(&menu); err != nil {
 		return 0, err
 	} else if !has {
 		return 0, gerror.New("角色不存在")
@@ -92,31 +60,8 @@ func Update(req *menuModel.UpdateMenuReq) (int, error) {
 		menu.Enabled = req.Enabled
 	}
 
-	if _, err := session.Update(&menu); err != nil {
+	if _, err := db.Update(&menu); err != nil {
 		return 0, err
-	}
-	if len(req.RoleIDs) > 0 {
-		menuRoles := make([]menuRoleModel.Entity, 0)
-		for i := range req.RoleIDs {
-			roleID := req.RoleIDs[i]
-			if roleID != 0 {
-				userRole := menuRoleModel.Entity{
-					MenuID: menu.ID,
-					RoleID: roleID,
-				}
-				menuRoles = append(menuRoles, userRole)
-			}
-		}
-
-		if len(menuRoles) > 0 {
-			if _, err := session.Where("menu_id = ?", req.ID).Delete(new(menuModel.Entity)); err != nil {
-				return 0, err
-			}
-			if _, err := session.Insert(menuRoles); err != nil {
-				return 0, err
-			}
-		}
-
 	}
 
 	return menu.ID, nil
@@ -176,4 +121,14 @@ func Delete(req *base.DeleteReq) (int64, error) {
 		return 0, err
 	}
 	return res, nil
+}
+
+// CancelConnectByMenuID 取消关联
+func CancelConnectByMenuID(req *menuRoleModel.CancelConnectReq) (bool, error) {
+	var menuRole menuRoleModel.Entity
+	db := orm.Instance()
+	if _, err := db.Where("role_id = ? AND menu_id in (?)", req.RoleID, req.MenuIDs).Delete(&menuRole); err != nil {
+		return false, err
+	}
+	return true, nil
 }

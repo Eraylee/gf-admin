@@ -20,10 +20,10 @@ type CreateMenuReq struct {
 	Icon       string `p:"icon"`
 	Type       string `p:"type"`
 	Target     string `p:"target"`
+	Action     string `p:"action"`
 	Sort       int    `p:"sort"`
 	Permission string `p:"permission"`
 	Enabled    int    `p:"enabled"`
-	RoleIDs    []int  `p:"roleIds"`
 }
 
 //UpdateMenuReq 修改菜单资料请求参数
@@ -32,10 +32,10 @@ type UpdateMenuReq struct {
 	Name       string `p:"name"  v:"required#请输入菜单名称"`
 	ParentID   int    `p:"parentId"`
 	Icon       string `p:"icon"`
+	Action     string `p:"action"`
 	Type       string `p:"type"`
 	Target     string `p:"target"`
 	Sort       int    `p:"sort"`
 	Permission string `p:"permission"`
 	Enabled    int    `p:"enabled"`
-	RoleIDs    []int  `p:"roleIds"`
 }

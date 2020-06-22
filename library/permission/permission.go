@@ -12,7 +12,9 @@ var permission *casbin.Enforcer
 
 func init() {
 	db := orm.Instance()
+
 	a, err := xormadapter.NewAdapterByEngine(db)
+
 	if err != nil {
 		log.Printf("casbin适配器连接数据库失败err : %s\n", err.Error())
 		return

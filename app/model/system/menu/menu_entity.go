@@ -10,6 +10,7 @@ type Entity struct {
 	Enabled   int       `json:"enabled" xorm:"TINYINT notnull"`
 	Admin     int       `json:"admin" xorm:"TINYINT notnull"`
 	ParentID  int       `json:"parentId" xorm:"parent_id BIGINT"`
+	Action    string    `json:"action" xorm:"VARCHAR(16)"`
 	Icon      string    `json:"icon" xorm:"VARCHAR(30) notnull"`
 	Type      string    `json:"type" xorm:"VARCHAR(30) notnull"`
 	Target    string    `json:"target" xorm:"VARCHAR(30) notnull"`

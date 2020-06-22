@@ -3,8 +3,10 @@ package role
 import (
 	"errors"
 	"gf-admin/app/model/base"
-	menuRoleModel "gf-admin/app/model/system/menu_role"
+	casbinRuleModel "gf-admin/app/model/system/casbin_rule"
+	menuModel "gf-admin/app/model/system/menu"
 	roleModel "gf-admin/app/model/system/role"
+	menuRoleModel "gf-admin/app/model/system/role_menu"
 	userRoleModel "gf-admin/app/model/system/user_role"
 	"gf-admin/library/orm"
 	"gf-admin/library/paging"
@@ -14,7 +16,12 @@ import (
 
 // Create 创建
 func Create(req *roleModel.CreateRoleReq) (int, error) {
-	db := orm.Instance().NewSession()
+	session := orm.Instance().NewSession()
+	defer session.Close()
+	// add Begin() before any action
+	if err := session.Begin(); err != nil {
+		return 0, err
+	}
 	role := roleModel.Entity{
 		Name:    req.Name,
 		Code:    req.Code,
@@ -22,9 +29,44 @@ func Create(req *roleModel.CreateRoleReq) (int, error) {
 		Admin:   req.Admin,
 		Enabled: req.Enabled,
 	}
-
-	if _, err := db.Insert(&role); err != nil {
+	if _, err := session.Insert(&role); err != nil {
 		return 0, err
+	}
+	var menus []menuModel.Entity
+	if err := session.Table(new(menuModel.Entity)).Where("id in (?)", req.MenuIDs).Find(&menus); err != nil {
+		return 0, err
+	}
+
+	if len(menus) > 0 {
+		menuRoles := make([]menuRoleModel.Entity, 0)
+		casbinRules := make([]casbinRuleModel.Entity, 0)
+
+		for i := range menus {
+			menu := menus[i]
+
+			userRole := menuRoleModel.Entity{
+				RoleID: role.ID,
+				MenuID: menu.ID,
+			}
+			casbinRule := casbinRuleModel.Entity{
+				PType: "p",
+				V0:    role.Code,
+				V1:    menu.Target,
+				V2:    menu.Action,
+			}
+			menuRoles = append(menuRoles, userRole)
+			casbinRules = append(casbinRules, casbinRule)
+		}
+
+		if len(menuRoles) > 0 {
+			if _, err := session.Insert(menuRoles); err != nil {
+				return 0, err
+			}
+			if _, err := session.Insert(casbinRules); err != nil {
+				return 0, err
+			}
+		}
+
 	}
 
 	return role.ID, nil
@@ -33,12 +75,22 @@ func Create(req *roleModel.CreateRoleReq) (int, error) {
 
 // Update 更新
 func Update(req *roleModel.UpdateRoleReq) (int, error) {
-	db := orm.Instance()
+	session := orm.Instance().NewSession()
+	defer session.Close()
+	// add Begin() before any action
+	if err := session.Begin(); err != nil {
+		return 0, err
+	}
 	var role roleModel.Entity
-	if has, err := db.ID(req.ID).Get(&role); err != nil {
+	if has, err := session.ID(req.ID).Get(&role); err != nil {
 		return 0, err
 	} else if !has {
 		return 0, gerror.New("角色不存在")
+	}
+
+	var menus []menuModel.Entity
+	if err := session.Table(new(menuModel.Entity)).Where("id in (?)", req.MenuIDs).Find(&menus); err != nil {
+		return 0, err
 	}
 
 	if req.Name != "" {
@@ -53,8 +105,43 @@ func Update(req *roleModel.UpdateRoleReq) (int, error) {
 	if req.Enabled != 0 {
 		role.Enabled = req.Enabled
 	}
-	if _, err := db.Update(&role); err != nil {
+	if _, err := session.Update(&role); err != nil {
 		return 0, err
+	}
+
+	if len(req.MenuIDs) > 0 {
+		menuRoles := make([]menuRoleModel.Entity, 0)
+		casbinRules := make([]casbinRuleModel.Entity, 0)
+
+		for i := range menus {
+			menu := menus[i]
+
+			userRole := menuRoleModel.Entity{
+				RoleID: role.ID,
+				MenuID: menu.ID,
+			}
+			casbinRule := casbinRuleModel.Entity{
+				PType: "p",
+				V0:    role.Code,
+				V1:    menu.Target,
+				V2:    menu.Action,
+			}
+			menuRoles = append(menuRoles, userRole)
+			casbinRules = append(casbinRules, casbinRule)
+		}
+
+		if len(menuRoles) > 0 {
+			if _, err := session.Where("menu_id = ?", req.ID).Delete(new(roleModel.Entity)); err != nil {
+				return 0, err
+			}
+			if _, err := session.Insert(menuRoles); err != nil {
+				return 0, err
+			}
+			if _, err := session.Insert(casbinRules); err != nil {
+				return 0, err
+			}
+		}
+
 	}
 	return role.ID, nil
 }
@@ -124,16 +211,6 @@ func CancelConnectByUserID(req *userRoleModel.CancelConnectReq) (bool, error) {
 	var userRole userRoleModel.Entity
 	db := orm.Instance()
 	if _, err := db.Where("user_id = ? AND role_id in (?)", req.UserID, req.RoleIDs).Delete(&userRole); err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-// CancelConnectByMenuID 取消关联
-func CancelConnectByMenuID(req *menuRoleModel.CancelConnectReq) (bool, error) {
-	var menuRole menuRoleModel.Entity
-	db := orm.Instance()
-	if _, err := db.Where("menu_id = ? AND role_id in (?)", req.MenuID, req.RoleIDs).Delete(&menuRole); err != nil {
 		return false, err
 	}
 	return true, nil

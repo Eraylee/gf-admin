@@ -2,7 +2,6 @@ package role
 
 import (
 	"gf-admin/app/model/base"
-	menuRoleModel "gf-admin/app/model/system/menu_role"
 	roleModel "gf-admin/app/model/system/role"
 	userRoleModel "gf-admin/app/model/system/user_role"
 	roleService "gf-admin/app/service/system/role"
@@ -135,28 +134,6 @@ func CancelUserConnect(r *ghttp.Request) {
 		response.Res(r).BadRequest(err.Error())
 	}
 	res, err := roleService.CancelConnectByUserID(&req)
-	if err != nil {
-		response.Res(r).BadRequest(err.Error())
-	}
-	response.Res(r).Success(res)
-}
-
-// CancelMenuConnect 取消关联菜单
-// @Summary 取消关联菜单
-// @Description 取消关联菜单
-// @Tags 系统 角色
-// @accept json
-// @Produce  json
-// @Param data body menu_role.CancelConnectReq true "model.SwagGroupAdd"
-// @Success 200 {object} response.Response
-// @Router /system/role/cancelMenuConnect [post]
-// @Security ApiKeyAuth
-func CancelMenuConnect(r *ghttp.Request) {
-	var req menuRoleModel.CancelConnectReq
-	if err := r.Parse(&req); err != nil {
-		response.Res(r).BadRequest(err.Error())
-	}
-	res, err := roleService.CancelConnectByMenuID(&req)
 	if err != nil {
 		response.Res(r).BadRequest(err.Error())
 	}

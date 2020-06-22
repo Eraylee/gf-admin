@@ -5,8 +5,8 @@ import (
 	"log"
 
 	menuModel "gf-admin/app/model/system/menu"
-	menuRoleModel "gf-admin/app/model/system/menu_role"
 	roleModel "gf-admin/app/model/system/role"
+	menuRoleModel "gf-admin/app/model/system/role_menu"
 	userModel "gf-admin/app/model/system/user"
 	userRole "gf-admin/app/model/system/user_role"
 

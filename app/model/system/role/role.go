@@ -19,13 +19,15 @@ type CreateRoleReq struct {
 	Sort    int    `p:"sort"`
 	Admin   int    `p:"admin"`
 	Enabled int    `p:"enabled"`
+	MenuIDs []int  `p:"menuIds"`
 }
 
 // UpdateRoleReq 修改角色请求参数
 type UpdateRoleReq struct {
-	ID      string `p:"id"  v:"required#请输入id"`
+	ID      int    `p:"id"  v:"required#请输入id"`
 	Name    string `p:"name"  v:"length:5,30#请输入角色名称"`
 	Sort    int    `p:"sort"`
 	Admin   int    `p:"admin"`
 	Enabled int    `p:"enabled"`
+	MenuIDs []int  `p:"menuIds"`
 }

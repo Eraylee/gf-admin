@@ -3,6 +3,7 @@ package menu
 import (
 	"gf-admin/app/model/base"
 	menuModel "gf-admin/app/model/system/menu"
+	RoleMenuService "gf-admin/app/model/system/role_menu"
 	menuService "gf-admin/app/service/system/menu"
 	"gf-admin/library/response"
 
@@ -111,6 +112,28 @@ func Delete(r *ghttp.Request) {
 		response.Res(r).BadRequest(err.Error())
 	}
 	res, err := menuService.Delete(&req)
+	if err != nil {
+		response.Res(r).BadRequest(err.Error())
+	}
+	response.Res(r).Success(res)
+}
+
+// CancelMenuConnect 取消关联菜单
+// @Summary 取消关联菜单
+// @Description 取消关联菜单
+// @Tags 系统 角色
+// @accept json
+// @Produce  json
+// @Param data body role_menu.CancelConnectReq true "model.SwagGroupAdd"
+// @Success 200 {object} response.Response
+// @Router /system/role/cancelMenuConnect [post]
+// @Security ApiKeyAuth
+func CancelMenuConnect(r *ghttp.Request) {
+	var req RoleMenuService.CancelConnectReq
+	if err := r.Parse(&req); err != nil {
+		response.Res(r).BadRequest(err.Error())
+	}
+	res, err := menuService.CancelConnectByMenuID(&req)
 	if err != nil {
 		response.Res(r).BadRequest(err.Error())
 	}
