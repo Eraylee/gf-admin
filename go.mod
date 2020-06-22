@@ -1,10 +1,15 @@
 module gf-admin
 
 require (
+	github.com/casbin/casbin v1.9.1 // indirect
+	github.com/casbin/casbin/v2 v2.7.2
+	github.com/casbin/xorm-adapter v1.0.0
+	github.com/casbin/xorm-adapter/v2 v2.0.1
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-openapi/spec v0.19.8 // indirect
 	github.com/go-openapi/swag v0.19.9 // indirect
+	github.com/go-xorm/xorm v0.7.9 // indirect
 	github.com/gogf/gf v1.13.0
 	github.com/gogf/gf-jwt v1.1.0
 	github.com/gogf/gf-swagger v1.0.3
