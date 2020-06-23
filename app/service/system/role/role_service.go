@@ -134,6 +134,9 @@ func Update(req *roleModel.UpdateRoleReq) (int, error) {
 			if _, err := session.Where("menu_id = ?", req.ID).Delete(new(roleModel.Entity)); err != nil {
 				return 0, err
 			}
+			if _, err := session.Where("V0 = ?", role.Code).Delete(new(casbinRuleModel.Entity)); err != nil {
+				return 0, err
+			}
 			if _, err := session.Insert(menuRoles); err != nil {
 				return 0, err
 			}

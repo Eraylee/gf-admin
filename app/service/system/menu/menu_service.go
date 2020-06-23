@@ -17,6 +17,7 @@ func Create(req *menuModel.CreateMenuReq) (int, error) {
 		Name:     req.Name,
 		Sort:     req.Sort,
 		Enabled:  req.Enabled,
+		Visiable: req.Visiable,
 		ParentID: req.ParentID,
 		Icon:     req.Icon,
 		Type:     req.Type,
@@ -52,6 +53,9 @@ func Update(req *menuModel.UpdateMenuReq) (int, error) {
 	}
 	if req.ParentID != 0 {
 		menu.ParentID = req.ParentID
+	}
+	if req.Visiable != 0 {
+		menu.Visiable = req.Visiable
 	}
 	if req.Sort != 0 {
 		menu.Sort = req.Sort
@@ -94,7 +98,7 @@ func QueryPage(req *menuModel.QueryMenuReq) ([]menuModel.Entity, error) {
 	p := paging.Create(req.PageNum, req.PageSize, int(total))
 
 	db.OrderBy(req.OrderColumn + " " + req.OrderType + " ")
-
+	db.Select("name , type , visiable ,  action , icon , type ,target , createdAt ,updatedAt ,parentId ")
 	db.Limit(p.PageSize, p.StartNum)
 
 	res := make([]menuModel.Entity, 0)
@@ -121,6 +125,85 @@ func Delete(req *base.DeleteReq) (int64, error) {
 		return 0, err
 	}
 	return res, nil
+}
+
+// QueryTree 查询菜单树
+func QueryTree(req *menuModel.QueryTreeReq) ([]menuModel.TreeItem, error) {
+	var menu menuModel.Entity
+	//  orderColumn , orderType :=  "created_at" , ""
+	db := orm.Instance().Table(&menu)
+
+	if req.Name != "" {
+		db.Where("name like ?", "%"+req.Name+"%")
+	}
+
+	if req.Type != "" {
+		db.Where("type like ?", "%"+req.Type+"%")
+	}
+
+	if req.Visiable != 0 {
+		db.Where("visiable = ?", req.Visiable)
+	}
+
+	db.Select("name , type , visiable ,  action , icon , type ,target ,parentId ")
+
+	res := make([]menuModel.Entity, 0)
+	if err := db.Find(&res); err != nil {
+		return nil, err
+	}
+	return toTreeData(res), nil
+
+}
+
+// toTreeData 转换成树形数据
+func toTreeData(data []menuModel.Entity) []menuModel.TreeItem {
+
+	tree := make([]menuModel.TreeItem, 0)
+	for _, v := range data {
+		if v.ParentID == 0 {
+			continue
+		}
+		children := getChildren(data, v)
+		menu := menuModel.TreeItem{
+			ID:       v.ID,
+			Name:     v.Name,
+			Sort:     v.Sort,
+			Visiable: v.Visiable,
+			Action:   v.Action,
+			Icon:     v.Icon,
+			Type:     v.Type,
+			Target:   v.Target,
+			Children: children,
+		}
+		tree = append(tree, menu)
+	}
+	return tree
+}
+
+// getChildren 获取子节点
+func getChildren(data []menuModel.Entity, item menuModel.Entity) []menuModel.TreeItem {
+	tree := make([]menuModel.TreeItem, 0)
+	for _, v := range data {
+
+		if v.ParentID != item.ID {
+			continue
+		}
+
+		children := getChildren(data, v)
+		menu := menuModel.TreeItem{
+			ID:       v.ID,
+			Name:     v.Name,
+			Sort:     v.Sort,
+			Visiable: v.Visiable,
+			Action:   v.Action,
+			Icon:     v.Icon,
+			Type:     v.Type,
+			Target:   v.Target,
+			Children: children,
+		}
+		tree = append(tree, menu)
+	}
+	return tree
 }
 
 // CancelConnectByMenuID 取消关联

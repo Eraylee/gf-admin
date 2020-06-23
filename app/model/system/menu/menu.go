@@ -13,6 +13,14 @@ type QueryMenuReq struct {
 	base.PagingQueryReq
 }
 
+// QueryTreeReq 查询菜单树
+type QueryTreeReq struct {
+	Name     string `p:"name"`
+	Type     string `p:"type"`
+	Target   string `p:"target"`
+	Visiable int    `p:"visiable"`
+}
+
 // CreateMenuReq 新增菜单资料请求参数
 type CreateMenuReq struct {
 	Name       string `p:"name"  v:"required#请输入菜单名称"`
@@ -24,6 +32,7 @@ type CreateMenuReq struct {
 	Sort       int    `p:"sort"`
 	Permission string `p:"permission"`
 	Enabled    int    `p:"enabled"`
+	Visiable   int    `p:"visiable"`
 }
 
 //UpdateMenuReq 修改菜单资料请求参数
@@ -38,4 +47,21 @@ type UpdateMenuReq struct {
 	Sort       int    `p:"sort"`
 	Permission string `p:"permission"`
 	Enabled    int    `p:"enabled"`
+	Visiable   int    `p:"visiable"`
+}
+
+//TreeItem 树形菜单子项
+type TreeItem struct {
+	ID         int    `json:"id"`
+	Name       string `json:"name"`
+	Icon       string `json:"icon"`
+	Action     string `json:"action"`
+	Type       string `json:"type"`
+	Target     string `json:"target"`
+	Sort       int    `json:"sort"`
+	Permission string `json:"permission"`
+	Enabled    int    `json:"enabled"`
+	Visiable   int    `json:"visiable"`
+
+	Children []TreeItem `json:"children"`
 }
