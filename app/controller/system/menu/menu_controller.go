@@ -77,7 +77,29 @@ func QueryPage(r *ghttp.Request) {
 	response.Res(r).Success(res)
 }
 
-// QuertByID 根据ID查询菜单
+// QueryTree 查询树形菜单
+// @Summary 查询树形菜单
+// @Description 查询树形菜单
+// @Tags 系统 菜单
+// @accept json
+// @Produce  json
+// @Param data query menu.QueryTreeReq true "model.SwagGroupAdd"
+// @Success 200 {object} response.Response
+// @Router /system/menu/queryTree [get]
+// @Security ApiKeyAuth
+func QueryTree(r *ghttp.Request) {
+	var req *menuModel.QueryTreeReq
+	if err := r.Parse(&req); err != nil {
+		response.Res(r).BadRequest(err.Error())
+	}
+	res, err := menuService.QueryTree(req)
+	if err != nil {
+		response.Res(r).BadRequest(err.Error())
+	}
+	response.Res(r).Success(res)
+}
+
+// QueryByID 根据ID查询菜单
 // @Summary 根据ID查询菜单
 // @Description 根据ID查询菜单
 // @Tags 系统 菜单
@@ -87,7 +109,7 @@ func QueryPage(r *ghttp.Request) {
 // @Success 200 {object} response.Response
 // @Router /system/menu/queryById [get]
 // @Security ApiKeyAuth
-func QuertByID(r *ghttp.Request) {
+func QueryByID(r *ghttp.Request) {
 	ID := r.GetQueryInt("id")
 	res, err := menuService.QueryByID(ID)
 	if err != nil {

@@ -73,7 +73,7 @@ func Update(req *menuModel.UpdateMenuReq) (int, error) {
 
 // QueryPage 分页查询
 func QueryPage(req *menuModel.QueryMenuReq) ([]menuModel.Entity, error) {
-	var userEntity menuModel.Entity
+	var menu menuModel.Entity
 	//  orderColumn , orderType :=  "created_at" , ""
 	db := orm.Instance()
 
@@ -89,7 +89,7 @@ func QueryPage(req *menuModel.QueryMenuReq) ([]menuModel.Entity, error) {
 		db.Where("enabled = ?", req.Enabled)
 	}
 
-	total, err := db.Count(&userEntity)
+	total, err := db.Count(&menu)
 
 	if err != nil {
 		return nil, gerror.New("读取行数失败")
@@ -98,11 +98,11 @@ func QueryPage(req *menuModel.QueryMenuReq) ([]menuModel.Entity, error) {
 	p := paging.Create(req.PageNum, req.PageSize, int(total))
 
 	db.OrderBy(req.OrderColumn + " " + req.OrderType + " ")
-	db.Select("name , type , visiable ,  action , icon , type ,target , createdAt ,updatedAt ,parentId ")
+	db.Select("id , name , type , visiable ,  action , icon , type ,target , createdAt ,updatedAt ,parent_id ")
 	db.Limit(p.PageSize, p.StartNum)
 
 	res := make([]menuModel.Entity, 0)
-	err = db.Table(&userEntity).Desc("created_at").Find(&res)
+	err = db.Table(&menu).Desc("created_at").Find(&res)
 	return res, err
 }
 
@@ -145,51 +145,25 @@ func QueryTree(req *menuModel.QueryTreeReq) ([]menuModel.TreeItem, error) {
 		db.Where("visiable = ?", req.Visiable)
 	}
 
-	db.Select("name , type , visiable ,  action , icon , type ,target ,parentId ")
+	db.Select("id , name , type , visiable ,  action , icon , type ,target ,parent_id ")
 
 	res := make([]menuModel.Entity, 0)
 	if err := db.Find(&res); err != nil {
 		return nil, err
 	}
-	return toTreeData(res), nil
+
+	return getTree(res, 0), nil
 
 }
 
-// toTreeData 转换成树形数据
-func toTreeData(data []menuModel.Entity) []menuModel.TreeItem {
-
+// getTree 获取树节点
+func getTree(data []menuModel.Entity, ID int) []menuModel.TreeItem {
 	tree := make([]menuModel.TreeItem, 0)
 	for _, v := range data {
-		if v.ParentID == 0 {
+		if v.ParentID != ID {
 			continue
 		}
-		children := getChildren(data, v)
-		menu := menuModel.TreeItem{
-			ID:       v.ID,
-			Name:     v.Name,
-			Sort:     v.Sort,
-			Visiable: v.Visiable,
-			Action:   v.Action,
-			Icon:     v.Icon,
-			Type:     v.Type,
-			Target:   v.Target,
-			Children: children,
-		}
-		tree = append(tree, menu)
-	}
-	return tree
-}
-
-// getChildren 获取子节点
-func getChildren(data []menuModel.Entity, item menuModel.Entity) []menuModel.TreeItem {
-	tree := make([]menuModel.TreeItem, 0)
-	for _, v := range data {
-
-		if v.ParentID != item.ID {
-			continue
-		}
-
-		children := getChildren(data, v)
+		children := getTree(data, v.ID)
 		menu := menuModel.TreeItem{
 			ID:       v.ID,
 			Name:     v.Name,

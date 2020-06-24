@@ -240,6 +240,56 @@
                 }
             }
         },
+        "/system/menu/queryTree": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "查询树形菜单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统 菜单"
+                ],
+                "summary": "查询树形菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "target",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "visiable",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/system/menu/update": {
             "post": {
                 "security": [
@@ -286,7 +336,7 @@
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "取消关联",
+                "description": "取消关联菜单",
                 "consumes": [
                     "application/json"
                 ],
@@ -296,7 +346,7 @@
                 "tags": [
                     "系统 角色"
                 ],
-                "summary": "取消关联",
+                "summary": "取消关联菜单",
                 "parameters": [
                     {
                         "description": "model.SwagGroupAdd",
@@ -325,7 +375,7 @@
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "取消关联",
+                "description": "取消关联用户",
                 "consumes": [
                     "application/json"
                 ],
@@ -335,7 +385,7 @@
                 "tags": [
                     "系统 角色"
                 ],
-                "summary": "取消关联",
+                "summary": "取消关联用户",
                 "parameters": [
                     {
                         "description": "model.SwagGroupAdd",
@@ -908,6 +958,9 @@
         "menu.CreateMenuReq": {
             "type": "object",
             "properties": {
+                "action": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "integer"
                 },
@@ -923,12 +976,6 @@
                 "permission": {
                     "type": "string"
                 },
-                "roleIDs": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
                 "sort": {
                     "type": "integer"
                 },
@@ -937,6 +984,9 @@
                 },
                 "type": {
                     "type": "string"
+                },
+                "visiable": {
+                    "type": "integer"
                 }
             }
         },
@@ -976,9 +1026,29 @@
                 }
             }
         },
+        "menu.QueryTreeReq": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "visiable": {
+                    "type": "integer"
+                }
+            }
+        },
         "menu.UpdateMenuReq": {
             "type": "object",
             "properties": {
+                "action": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "integer"
                 },
@@ -997,12 +1067,6 @@
                 "permission": {
                     "type": "string"
                 },
-                "roleIDs": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
                 "sort": {
                     "type": "integer"
                 },
@@ -1011,20 +1075,9 @@
                 },
                 "type": {
                     "type": "string"
-                }
-            }
-        },
-        "role_menu.CancelConnectReq": {
-            "type": "object",
-            "properties": {
-                "menuID": {
-                    "type": "integer"
                 },
-                "roleIDs": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
+                "visiable": {
+                    "type": "integer"
                 }
             }
         },
@@ -1053,6 +1106,12 @@
                 },
                 "enabled": {
                     "type": "integer"
+                },
+                "menuIDs": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "name": {
                     "type": "string"
@@ -1105,12 +1164,32 @@
                     "type": "integer"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "integer"
+                },
+                "menuIDs": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "name": {
                     "type": "string"
                 },
                 "sort": {
+                    "type": "integer"
+                }
+            }
+        },
+        "role_menu.CancelConnectReq": {
+            "type": "object",
+            "properties": {
+                "menuIDs": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "roleID": {
                     "type": "integer"
                 }
             }

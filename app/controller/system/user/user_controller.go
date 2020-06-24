@@ -121,7 +121,7 @@ func UpdatePassword(r *ghttp.Request) {
 	response.Res(r).Success(res)
 }
 
-// QuertByID 根据ID查询用户
+// QueryByID 根据ID查询用户
 // @Summary 根据ID查询用户
 // @Description 根据ID查询用户
 // @Tags 系统 用户
@@ -131,7 +131,7 @@ func UpdatePassword(r *ghttp.Request) {
 // @Success 200 {object} response.Response
 // @Router /system/user/queryById [get]
 // @Security ApiKeyAuth
-func QuertByID(r *ghttp.Request) {
+func QueryByID(r *ghttp.Request) {
 	ID := r.GetQueryInt("id")
 	res, err := userService.QueryByID(ID)
 	if err != nil {

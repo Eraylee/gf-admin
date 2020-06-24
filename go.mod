@@ -19,7 +19,8 @@ require (
 	github.com/swaggo/swag v1.6.7 // indirect
 	github.com/urfave/cli/v2 v2.2.0 // indirect
 	golang.org/x/net v0.0.0-20200602114024-627f9648deb9 // indirect
-	golang.org/x/tools v0.0.0-20200610052024-8d7dbee4c8ae // indirect
+	golang.org/x/text v0.3.3 // indirect
+	golang.org/x/tools v0.0.0-20200623204733-f8e0ea3a3a8f // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	xorm.io/xorm v1.0.1
 )

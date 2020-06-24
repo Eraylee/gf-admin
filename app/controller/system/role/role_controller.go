@@ -77,7 +77,7 @@ func QueryPage(r *ghttp.Request) {
 	response.Res(r).Success(res)
 }
 
-// QuertByID 根据ID查询角色
+// QueryByID 根据ID查询角色
 // @Summary 根据ID查询角色
 // @Description 根据ID查询角色
 // @Tags 系统 角色
@@ -87,7 +87,7 @@ func QueryPage(r *ghttp.Request) {
 // @Success 200 {object} response.Response
 // @Router /system/role/queryById [get]
 // @Security ApiKeyAuth
-func QuertByID(r *ghttp.Request) {
+func QueryByID(r *ghttp.Request) {
 	ID := r.GetQueryInt("id")
 	res, err := roleService.QueryByID(ID)
 	if err != nil {
