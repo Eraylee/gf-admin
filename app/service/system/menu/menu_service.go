@@ -48,7 +48,7 @@ func Update(req *menuModel.UpdateMenuReq) (int, error) {
 	if req.Target != "" {
 		menu.Target = req.Target
 	}
-	if req.Type != "" {
+	if req.Type != 0 {
 		menu.Type = req.Type
 	}
 	if req.ParentID != 0 {
@@ -137,8 +137,8 @@ func QueryTree(req *menuModel.QueryTreeReq) ([]menuModel.TreeItem, error) {
 		db.Where("name like ?", "%"+req.Name+"%")
 	}
 
-	if req.Type != "" {
-		db.Where("type like ?", "%"+req.Type+"%")
+	if req.Type != 0 {
+		db.Where("type = ?", req.Type)
 	}
 
 	if req.Visiable != 0 {
@@ -164,7 +164,7 @@ func getTree(data []menuModel.Entity, ID int) []menuModel.TreeItem {
 			continue
 		}
 		children := getTree(data, v.ID)
-		menu := menuModel.TreeItem{
+		item := menuModel.TreeItem{
 			ID:       v.ID,
 			Name:     v.Name,
 			Sort:     v.Sort,
@@ -175,7 +175,7 @@ func getTree(data []menuModel.Entity, ID int) []menuModel.TreeItem {
 			Target:   v.Target,
 			Children: children,
 		}
-		tree = append(tree, menu)
+		tree = append(tree, item)
 	}
 	return tree
 }

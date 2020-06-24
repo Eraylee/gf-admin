@@ -16,7 +16,7 @@ type QueryMenuReq struct {
 // QueryTreeReq 查询菜单树
 type QueryTreeReq struct {
 	Name     string `p:"name"`
-	Type     string `p:"type"`
+	Type     int    `p:"type"`
 	Target   string `p:"target"`
 	Visiable int    `p:"visiable"`
 }
@@ -26,7 +26,7 @@ type CreateMenuReq struct {
 	Name       string `p:"name"  v:"required#请输入菜单名称"`
 	ParentID   int    `p:"parentId"`
 	Icon       string `p:"icon"`
-	Type       string `p:"type"`
+	Type       int    `p:"type"`
 	Target     string `p:"target"`
 	Action     string `p:"action"`
 	Sort       int    `p:"sort"`
@@ -42,7 +42,7 @@ type UpdateMenuReq struct {
 	ParentID   int    `p:"parentId"`
 	Icon       string `p:"icon"`
 	Action     string `p:"action"`
-	Type       string `p:"type"`
+	Type       int    `p:"type"`
 	Target     string `p:"target"`
 	Sort       int    `p:"sort"`
 	Permission string `p:"permission"`
@@ -56,7 +56,7 @@ type TreeItem struct {
 	Name       string `json:"name"`
 	Icon       string `json:"icon"`
 	Action     string `json:"action"`
-	Type       string `json:"type"`
+	Type       int    `json:"type"`
 	Target     string `json:"target"`
 	Sort       int    `json:"sort"`
 	Permission string `json:"permission"`
