@@ -1,0 +1,33 @@
+# HTTP Server
+[server]
+	Address     = ":8000"
+	ServerRoot  = "public"
+	ServerAgent = "gf-app"
+	LogPath     = "/tmp/log/gf-app/server"
+
+# Logger.
+[logger]
+    Path        = "/tmp/log/gf-app"
+    Level       = "all"
+    Stdout      = true
+
+# Database.
+[database]
+    host         = "localhost"
+    port         = "5432"
+    user         = "postgres"
+    pass         = "password"
+    name         = "name"
+    type         = "pgsql"
+    debug        =  true
+    # Database logger.
+    [database.logger]
+        Path   = "/tmp/log/gf-app/sql"
+        Level  = "all"
+        Stdout = true
+
+# app.
+[app]
+    JwtSecret        ="JwtSecret"
+    JwtExpiresin     =30
+    DefaultPassword  ="123456"
