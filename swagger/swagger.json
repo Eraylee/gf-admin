@@ -270,7 +270,7 @@
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "integer",
                         "name": "type",
                         "in": "query"
                     },
@@ -983,7 +983,7 @@
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "visiable": {
                     "type": "integer"
@@ -1036,7 +1036,7 @@
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "visiable": {
                     "type": "integer"
@@ -1074,7 +1074,7 @@
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "visiable": {
                     "type": "integer"

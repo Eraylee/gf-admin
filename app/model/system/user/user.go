@@ -2,6 +2,7 @@ package user
 
 import (
 	"gf-admin/app/model/base"
+	roleModel "gf-admin/app/model/system/role"
 	"time"
 )
 
@@ -50,12 +51,13 @@ type LoginReq struct {
 
 // Res 返回数据
 type Res struct {
-	ID        int       `json:"id" xorm:"id"`                //
-	Email     string    `json:"email" xorm:"email"`          //
-	Phone     string    `json:"phone" xorm:"phone"`          //
-	Nickname  string    `json:"nickname" xorm:"nickname"`    //
-	Enabled   int       `json:"enabled" xorm:"enabled"`      //
-	Username  string    `json:"username" xorm:"username"`    //
-	CreatedAt time.Time `json:"createdAt" xorm:"created_at"` //
-	UpdatedAt time.Time `json:"updatedAt" xorm:"updated_at"` //
+	ID        int                `json:"id"`       //
+	Email     string             `json:"email"`    //
+	Phone     string             `json:"phone"`    //
+	Nickname  string             `json:"nickname"` //
+	Enabled   int                `json:"enabled"`  //
+	Username  string             `json:"username"` //
+	Roles     []roleModel.Entity `json:"roles"`
+	CreatedAt time.Time          `json:"createdAt"` //
+	UpdatedAt time.Time          `json:"updatedAt"` //
 }

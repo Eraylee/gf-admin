@@ -32,44 +32,47 @@ func Create(req *roleModel.CreateRoleReq) (int, error) {
 	if _, err := session.Insert(&role); err != nil {
 		return 0, err
 	}
-	var menus []menuModel.Entity
-	if err := session.Table(new(menuModel.Entity)).Where("id in (?)", req.MenuIDs).Find(&menus); err != nil {
-		return 0, err
-	}
 
-	if len(menus) > 0 {
-		menuRoles := make([]menuRoleModel.Entity, 0)
-		casbinRules := make([]casbinRuleModel.Entity, 0)
-
-		for i := range menus {
-			menu := menus[i]
-
-			userRole := menuRoleModel.Entity{
-				RoleID: role.ID,
-				MenuID: menu.ID,
-			}
-			casbinRule := casbinRuleModel.Entity{
-				PType: "p",
-				V0:    role.Code,
-				V1:    menu.Target,
-				V2:    menu.Action,
-			}
-			menuRoles = append(menuRoles, userRole)
-			casbinRules = append(casbinRules, casbinRule)
+	if len(req.MenuIDs) > 0 {
+		var menus []menuModel.Entity
+		if err := session.Table(new(menuModel.Entity)).Where("id in (?)", req.MenuIDs).Find(&menus); err != nil {
+			return 0, err
 		}
 
-		if len(menuRoles) > 0 {
-			if _, err := session.Insert(menuRoles); err != nil {
-				return 0, err
-			}
-			if _, err := session.Insert(casbinRules); err != nil {
-				return 0, err
-			}
-		}
+		if len(menus) > 0 {
+			menuRoles := make([]menuRoleModel.Entity, 0)
+			casbinRules := make([]casbinRuleModel.Entity, 0)
 
+			for i := range menus {
+				menu := menus[i]
+
+				userRole := menuRoleModel.Entity{
+					RoleID: role.ID,
+					MenuID: menu.ID,
+				}
+				casbinRule := casbinRuleModel.Entity{
+					PType: "p",
+					V0:    role.Code,
+					V1:    menu.Target,
+					V2:    menu.Action,
+				}
+				menuRoles = append(menuRoles, userRole)
+				casbinRules = append(casbinRules, casbinRule)
+			}
+
+			if len(menuRoles) > 0 {
+				if _, err := session.Insert(menuRoles); err != nil {
+					return 0, err
+				}
+				if _, err := session.Insert(casbinRules); err != nil {
+					return 0, err
+				}
+			}
+
+		}
 	}
 
-	return role.ID, nil
+	return role.ID, session.Commit()
 
 }
 
@@ -146,7 +149,7 @@ func Update(req *roleModel.UpdateRoleReq) (int, error) {
 		}
 
 	}
-	return role.ID, nil
+	return role.ID, session.Commit()
 }
 
 // QueryPage 分页查询
