@@ -1,10 +1,12 @@
 package user
 
 import (
+	"errors"
 	"gf-admin/app/model/base"
 	userModel "gf-admin/app/model/system/user"
 	userRoleModel "gf-admin/app/model/system/user_role"
 	"gf-admin/library/orm"
+	"gf-admin/library/paging"
 
 	"github.com/gogf/gf/crypto/gmd5"
 	"github.com/gogf/gf/errors/gerror"
@@ -124,8 +126,8 @@ func Update(req *userModel.UpdateUserReq) (int, error) {
 
 // QueryPage 分页查询
 func QueryPage(req *userModel.QueryUserReq) ([]userModel.Res, error) {
-	// var userEntity userModel.Entity
-	//  orderColumn , orderType :=  "created_at" , ""
+	var userEntity userModel.Entity
+
 	db := orm.Instance()
 	if req.Username != "" {
 		db.Where("username like ?", "%"+req.Username+"%")
@@ -142,26 +144,16 @@ func QueryPage(req *userModel.QueryUserReq) ([]userModel.Res, error) {
 	if req.Enabled != 0 {
 		db.Where("enabled = ?", req.Enabled)
 	}
+	total, err := db.Count(&userEntity)
+	if err != nil {
+		return nil, errors.New("读取行数失败")
+	}
+	p := paging.Create(req.PageNum, req.PageSize, int(total))
 
-	// total, err := db.Count(&userEntity)
-
-	// if err != nil {
-	// 	return nil, errors.New("读取行数失败")
-	// }
+	db.OrderBy(req.OrderColumn + " " + req.OrderType + " ")
+	db.Limit(p.PageSize, p.StartNum)
 	res := make([]userModel.Res, 0)
-	// p := paging.Create(req.PageNum, req.PageSize, int(total))
-	err := db.Table("user").
-		Alias("u").
-		Join("LEFT", []string{"user_role", "ur"}, "ur.user_id = u.id").
-		Join("LEFT", []string{"role", "r"}, "r.id = ur.role_id").
-		Select("distinct  u.id, u.email , u.phone , u.nickname , u.username , u.enabled , u.created_at , u.updated_at, r.id as roleId,r.name").Find(&res)
-
-	// db.OrderBy(req.OrderColumn + " " + req.OrderType + " ")
-
-	// db.Limit(p.PageSize, p.StartNum)
-
-	// res := make([]userModel.Res, 0)
-	// err = db.Find(&res)
+	err = db.Table(&userEntity).Select("id,email,phone,nickname,username,enabled,created_at,updated_at").Find(&res)
 	return res, err
 }
 

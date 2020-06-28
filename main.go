@@ -8,7 +8,7 @@ import (
 	"github.com/gogf/gf/frame/g"
 )
 
-// @title Golang Gin API
+// @title Golang API
 // @version 1.0
 // @description ERAYLEE'S web api
 
