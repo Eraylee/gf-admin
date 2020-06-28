@@ -12,7 +12,7 @@ type Entity struct {
 	Admin     int       `json:"admin" xorm:"TINYINT notnull"`
 	CreatedAt time.Time `json:"createdAt" xorm:"created notnull"`
 	UpdatedAt time.Time `json:"updatedAt" xorm:"updated notnull" `
-	DeletedAt time.Time `json:"deletedAt" xorm:"deleted"`
+	DeletedAt time.Time `json:"-" xorm:"deleted"`
 }
 
 //TableName 表名

@@ -3,11 +3,14 @@ package user
 import (
 	"errors"
 	"gf-admin/app/model/base"
+	roleModel "gf-admin/app/model/system/role"
 	userModel "gf-admin/app/model/system/user"
 	userRoleModel "gf-admin/app/model/system/user_role"
+	roleService "gf-admin/app/service/system/role"
 	"gf-admin/library/orm"
 	"gf-admin/library/paging"
 
+	"github.com/gogf/gf/container/gmap"
 	"github.com/gogf/gf/crypto/gmd5"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
@@ -47,8 +50,7 @@ func Create(req *userModel.CreateUserReq) (int, error) {
 
 	if len(req.RoleIDs) > 0 {
 		userRoles := make([]userRoleModel.Entity, 0)
-		for i := range req.RoleIDs {
-			roleID := req.RoleIDs[i]
+		for _, roleID := range req.RoleIDs {
 			if roleID != 0 {
 				userRole := userRoleModel.Entity{
 					UserID: user.ID,
@@ -99,8 +101,7 @@ func Update(req *userModel.UpdateUserReq) (int, error) {
 
 	if len(req.RoleIDs) > 0 {
 		userRoles := make([]userRoleModel.Entity, 0)
-		for i := range req.RoleIDs {
-			roleID := req.RoleIDs[i]
+		for _, roleID := range req.RoleIDs {
 			if roleID != 0 {
 				userRole := userRoleModel.Entity{
 					UserID: req.ID,
@@ -125,9 +126,68 @@ func Update(req *userModel.UpdateUserReq) (int, error) {
 }
 
 // QueryPage 分页查询
-func QueryPage(req *userModel.QueryUserReq) ([]userModel.Res, error) {
-	var userEntity userModel.Entity
+func QueryPage(req *userModel.QueryUserReq) (*base.PagingRes, error) {
 
+	users, p, err := queryUsers(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var userRoles []userRoleModel.Entity
+	var roles []roleModel.Entity
+
+	userIDs := make([]int, 0)
+	for _, v := range users {
+		userIDs = append(userIDs, v.ID)
+	}
+
+	userRoles, err = roleService.QueryUserRole(userIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	roleIDs := make([]int, 0)
+	for _, v := range userRoles {
+		roleIDs = append(roleIDs, v.RoleID)
+	}
+
+	roles, err = roleService.QueryRoles(roleIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	res := buildUserRes(users, roles, userRoles)
+
+	return &base.PagingRes{
+		Data:   res,
+		Paging: p,
+	}, err
+}
+
+// buildUserRes 生成用户返回值
+func buildUserRes(users []userModel.Res, roles []roleModel.Entity, userRoles []userRoleModel.Entity) []userModel.Res {
+	roleMap := gmap.New()
+	for _, role := range roles {
+		roleMap.Set(role.ID, role)
+	}
+	userRes := make([]userModel.Res, 0)
+	for _, user := range users {
+		r := make([]roleModel.Entity, 0)
+		for _, userRole := range userRoles {
+			if user.ID == userRole.UserID {
+				role := roleMap.Get(userRole.RoleID).(roleModel.Entity)
+				r = append(r, role)
+			}
+		}
+		user.Roles = r
+		userRes = append(userRes, user)
+	}
+	return userRes
+}
+
+// 查询用户
+func queryUsers(req *userModel.QueryUserReq) ([]userModel.Res, *paging.Paging, error) {
+	var userEntity userModel.Entity
 	db := orm.Instance()
 	if req.Username != "" {
 		db.Where("username like ?", "%"+req.Username+"%")
@@ -146,16 +206,21 @@ func QueryPage(req *userModel.QueryUserReq) ([]userModel.Res, error) {
 	}
 	total, err := db.Count(&userEntity)
 	if err != nil {
-		return nil, errors.New("读取行数失败")
+		return nil, nil, errors.New("读取行数失败")
 	}
 	p := paging.Create(req.PageNum, req.PageSize, int(total))
 
 	db.OrderBy(req.OrderColumn + " " + req.OrderType + " ")
 	db.Limit(p.PageSize, p.StartNum)
-	res := make([]userModel.Res, 0)
-	err = db.Table(&userEntity).Select("id,email,phone,nickname,username,enabled,created_at,updated_at").Find(&res)
-	return res, err
+	users := make([]userModel.Res, 0)
+	err = db.Table(&userEntity).Select("id , email , phone , nickname , username , enabled , created_at , updated_at").Find(&users)
+	if err != nil {
+		return nil, nil, err
+	}
+	return users, p, nil
 }
+
+// func queryUserRole
 
 // QueryByID 通过id查询
 func QueryByID(ID int) (*userModel.Res, error) {

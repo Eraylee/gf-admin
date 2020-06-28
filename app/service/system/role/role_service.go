@@ -221,3 +221,23 @@ func CancelConnectByUserID(req *userRoleModel.CancelConnectReq) (bool, error) {
 	}
 	return true, nil
 }
+
+//QueryUserRole 查询用户角色关系
+func QueryUserRole(userIDs []int) ([]userRoleModel.Entity, error) {
+	db := orm.Instance()
+	userRoles := make([]userRoleModel.Entity, 0)
+	if err := db.Table(new(userRoleModel.Entity)).In("user_id", userIDs).Select("user_id,role_id").Find(&userRoles); err != nil {
+		return nil, err
+	}
+	return userRoles, nil
+}
+
+// QueryRoles 查询角色
+func QueryRoles(roleIDs []int) ([]roleModel.Entity, error) {
+	db := orm.Instance()
+	roles := make([]roleModel.Entity, 0)
+	if err := db.Table(new(roleModel.Entity)).In("id", roleIDs).Select("id,name,code,Admin,created_at,updated_at").Find(&roles); err != nil {
+		return nil, err
+	}
+	return roles, nil
+}
