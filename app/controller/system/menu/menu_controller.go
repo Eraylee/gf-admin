@@ -143,12 +143,12 @@ func Delete(r *ghttp.Request) {
 // CancelMenuConnect 取消关联菜单
 // @Summary 取消关联菜单
 // @Description 取消关联菜单
-// @Tags 系统 角色
+// @Tags 系统 菜单
 // @accept json
 // @Produce  json
 // @Param data body role_menu.CancelConnectReq true "model.SwagGroupAdd"
 // @Success 200 {object} response.Response
-// @Router /system/role/cancelMenuConnect [post]
+// @Router /system/menu/cancelMenuConnect [post]
 // @Security ApiKeyAuth
 func CancelMenuConnect(r *ghttp.Request) {
 	var req RoleMenuService.CancelConnectReq

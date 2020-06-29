@@ -35,7 +35,7 @@ func Create(req *roleModel.CreateRoleReq) (int, error) {
 
 	if len(req.MenuIDs) > 0 {
 		var menus []menuModel.Entity
-		if err := session.Table(new(menuModel.Entity)).Where("id in (?)", req.MenuIDs).Find(&menus); err != nil {
+		if err := session.Table(new(menuModel.Entity)).In("id", req.MenuIDs).Find(&menus); err != nil {
 			return 0, err
 		}
 
@@ -90,9 +90,8 @@ func Update(req *roleModel.UpdateRoleReq) (int, error) {
 	} else if !has {
 		return 0, gerror.New("角色不存在")
 	}
-
-	var menus []menuModel.Entity
-	if err := session.Table(new(menuModel.Entity)).Where("id in (?)", req.MenuIDs).Find(&menus); err != nil {
+	menus := make(menuModel.Menus, 0)
+	if err := session.Table(new(menuModel.Entity)).In("id", req.MenuIDs).Find(&menus); err != nil {
 		return 0, err
 	}
 
@@ -116,9 +115,7 @@ func Update(req *roleModel.UpdateRoleReq) (int, error) {
 		menuRoles := make([]menuRoleModel.Entity, 0)
 		casbinRules := make([]casbinRuleModel.Entity, 0)
 
-		for i := range menus {
-			menu := menus[i]
-
+		for _, menu := range menus {
 			userRole := menuRoleModel.Entity{
 				RoleID: role.ID,
 				MenuID: menu.ID,
@@ -134,7 +131,7 @@ func Update(req *roleModel.UpdateRoleReq) (int, error) {
 		}
 
 		if len(menuRoles) > 0 {
-			if _, err := session.Where("menu_id = ?", req.ID).Delete(new(roleModel.Entity)); err != nil {
+			if _, err := session.Where("menu_id = ?", req.ID).Delete(new(menuRoleModel.Entity)); err != nil {
 				return 0, err
 			}
 			if _, err := session.Where("V0 = ?", role.Code).Delete(new(casbinRuleModel.Entity)); err != nil {
@@ -216,7 +213,7 @@ func Delete(req *base.DeleteReq) (int64, error) {
 func CancelConnectByUserID(req *userRoleModel.CancelConnectReq) (bool, error) {
 	var userRole userRoleModel.Entity
 	db := orm.Instance()
-	if _, err := db.Where("user_id = ? AND role_id in (?)", req.UserID, req.RoleIDs).Delete(&userRole); err != nil {
+	if _, err := db.In("role_id", req.RoleIDs).And("user_id = ?)", req.UserID).Delete(&userRole); err != nil {
 		return false, err
 	}
 	return true, nil
@@ -225,7 +222,7 @@ func CancelConnectByUserID(req *userRoleModel.CancelConnectReq) (bool, error) {
 //QueryUserRoles 查询用户角色关系
 func QueryUserRoles(userIDs []int) (userRoleModel.UserRoles, error) {
 	db := orm.Instance()
-	var userRoles userRoleModel.UserRoles
+	userRoles := make(userRoleModel.UserRoles, 0)
 	if err := db.Table(new(userRoleModel.Entity)).In("user_id", userIDs).Select("user_id,role_id").Find(&userRoles); err != nil {
 		return nil, err
 	}
@@ -235,7 +232,7 @@ func QueryUserRoles(userIDs []int) (userRoleModel.UserRoles, error) {
 // QueryRoles 查询角色
 func QueryRoles(roleIDs []int) (roleModel.Roles, error) {
 	db := orm.Instance()
-	var roles roleModel.Roles
+	roles := make(roleModel.Roles, 0)
 	if err := db.Table(new(roleModel.Entity)).In("id", roleIDs).Select("id,name,code,Admin,created_at,updated_at").Find(&roles); err != nil {
 		return nil, err
 	}

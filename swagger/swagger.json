@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "description": "ERAYLEE'S web api",
-        "title": "Golang Gin API",
+        "title": "Golang API",
         "contact": {},
         "license": {},
         "version": "1.0"
@@ -34,6 +34,45 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/user.LoginReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/menu/cancelMenuConnect": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "取消关联菜单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统 菜单"
+                ],
+                "summary": "取消关联菜单",
+                "parameters": [
+                    {
+                        "description": "model.SwagGroupAdd",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/role_menu.CancelConnectReq"
                         }
                     }
                 ],
@@ -316,45 +355,6 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/menu.UpdateMenuReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/system/role/cancelMenuConnect": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "取消关联菜单",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "系统 角色"
-                ],
-                "summary": "取消关联菜单",
-                "parameters": [
-                    {
-                        "description": "model.SwagGroupAdd",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/role_menu.CancelConnectReq"
                         }
                     }
                 ],

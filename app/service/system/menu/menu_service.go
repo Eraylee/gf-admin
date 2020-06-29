@@ -2,7 +2,9 @@ package menu
 
 import (
 	"gf-admin/app/model/base"
+	casbinRuleModel "gf-admin/app/model/system/casbin_rule"
 	menuModel "gf-admin/app/model/system/menu"
+	roleModel "gf-admin/app/model/system/role"
 	menuRoleModel "gf-admin/app/model/system/role_menu"
 	"gf-admin/library/orm"
 	"gf-admin/library/paging"
@@ -183,9 +185,30 @@ func getTree(data menuModel.Menus, ID int) []menuModel.TreeItem {
 // CancelConnectByMenuID 取消关联
 func CancelConnectByMenuID(req *menuRoleModel.CancelConnectReq) (bool, error) {
 	var menuRole menuRoleModel.Entity
-	db := orm.Instance()
-	if _, err := db.Where("role_id = ? AND menu_id in (?)", req.RoleID, req.MenuIDs).Delete(&menuRole); err != nil {
+	session := orm.Instance().NewSession()
+	if err := session.Begin(); err != nil {
 		return false, err
 	}
-	return true, nil
+	defer session.Close()
+
+	var role roleModel.Entity
+	if has, err := session.Where("role_id = ?", req.RoleID).Get(&role); err != nil {
+		return false, err
+	} else if !has {
+		return false, gerror.New("角色不存在")
+	}
+	menus := make(menuModel.Menus, 0)
+	if err := session.In("id", req.MenuIDs).Find(&menus); err != nil {
+		return false, err
+	}
+	if len(menus) <= 0 {
+		return false, gerror.New("菜单不存在")
+	}
+	if _, err := session.In("menu_id", req.MenuIDs).And("role_id = ?", req.RoleID).Delete(&menuRole); err != nil {
+		return false, err
+	}
+	if _, err := session.In("v1", menus.ToIDs).And("V0 = ?", role.Code).Delete(new(casbinRuleModel.Entity)); err != nil {
+		return false, err
+	}
+	return true, session.Commit()
 }
