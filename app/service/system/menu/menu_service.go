@@ -72,7 +72,7 @@ func Update(req *menuModel.UpdateMenuReq) (int, error) {
 }
 
 // QueryPage 分页查询
-func QueryPage(req *menuModel.QueryMenuReq) ([]menuModel.Entity, error) {
+func QueryPage(req *menuModel.QueryMenuReq) (menuModel.Menus, error) {
 	var menu menuModel.Entity
 	//  orderColumn , orderType :=  "created_at" , ""
 	db := orm.Instance()
@@ -101,9 +101,9 @@ func QueryPage(req *menuModel.QueryMenuReq) ([]menuModel.Entity, error) {
 	db.Select("id , name , type , visiable ,  action , icon , type ,target , createdAt ,updatedAt ,parent_id ")
 	db.Limit(p.PageSize, p.StartNum)
 
-	res := make([]menuModel.Entity, 0)
-	err = db.Table(&menu).Desc("created_at").Find(&res)
-	return res, err
+	var menus menuModel.Menus
+	err = db.Table(&menu).Desc("created_at").Find(&menus)
+	return menus, err
 }
 
 // QueryByID 通过id查询
@@ -157,7 +157,7 @@ func QueryTree(req *menuModel.QueryTreeReq) ([]menuModel.TreeItem, error) {
 }
 
 // getTree 获取树节点
-func getTree(data []menuModel.Entity, ID int) []menuModel.TreeItem {
+func getTree(data menuModel.Menus, ID int) []menuModel.TreeItem {
 	tree := make([]menuModel.TreeItem, 0)
 	for _, v := range data {
 		if v.ParentID != ID {

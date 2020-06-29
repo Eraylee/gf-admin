@@ -153,7 +153,7 @@ func Update(req *roleModel.UpdateRoleReq) (int, error) {
 }
 
 // QueryPage 分页查询
-func QueryPage(req *roleModel.QueryRoleReq) ([]roleModel.Entity, error) {
+func QueryPage(req *roleModel.QueryRoleReq) (roleModel.Roles, error) {
 	var userEntity roleModel.Entity
 	//  orderColumn , orderType :=  "created_at" , ""
 	db := orm.Instance()
@@ -186,9 +186,9 @@ func QueryPage(req *roleModel.QueryRoleReq) ([]roleModel.Entity, error) {
 
 	db.Limit(p.PageSize, p.StartNum)
 
-	res := make([]roleModel.Entity, 0)
-	err = db.Table(&userEntity).Desc("created_at").Find(&res)
-	return res, err
+	var roles roleModel.Roles
+	err = db.Table(&userEntity).Find(&roles)
+	return roles, err
 }
 
 // QueryByID 通过id查询
@@ -222,10 +222,10 @@ func CancelConnectByUserID(req *userRoleModel.CancelConnectReq) (bool, error) {
 	return true, nil
 }
 
-//QueryUserRole 查询用户角色关系
-func QueryUserRole(userIDs []int) ([]userRoleModel.Entity, error) {
+//QueryUserRoles 查询用户角色关系
+func QueryUserRoles(userIDs []int) (userRoleModel.UserRoles, error) {
 	db := orm.Instance()
-	userRoles := make([]userRoleModel.Entity, 0)
+	var userRoles userRoleModel.UserRoles
 	if err := db.Table(new(userRoleModel.Entity)).In("user_id", userIDs).Select("user_id,role_id").Find(&userRoles); err != nil {
 		return nil, err
 	}
@@ -233,9 +233,9 @@ func QueryUserRole(userIDs []int) ([]userRoleModel.Entity, error) {
 }
 
 // QueryRoles 查询角色
-func QueryRoles(roleIDs []int) ([]roleModel.Entity, error) {
+func QueryRoles(roleIDs []int) (roleModel.Roles, error) {
 	db := orm.Instance()
-	roles := make([]roleModel.Entity, 0)
+	var roles roleModel.Roles
 	if err := db.Table(new(roleModel.Entity)).In("id", roleIDs).Select("id,name,code,Admin,created_at,updated_at").Find(&roles); err != nil {
 		return nil, err
 	}
