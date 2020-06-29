@@ -49,7 +49,7 @@ func Create(req *userModel.CreateUserReq) (int, error) {
 	}
 
 	if len(req.RoleIDs) > 0 {
-		userRoles := make([]userRoleModel.Entity, 0)
+		var userRoles userRoleModel.UserRoles
 		for _, roleID := range req.RoleIDs {
 			if roleID != 0 {
 				userRole := userRoleModel.Entity{
@@ -100,7 +100,7 @@ func Update(req *userModel.UpdateUserReq) (int, error) {
 	}
 
 	if len(req.RoleIDs) > 0 {
-		userRoles := make([]userRoleModel.Entity, 0)
+		var userRoles userRoleModel.UserRoles
 		for _, roleID := range req.RoleIDs {
 			if roleID != 0 {
 				userRole := userRoleModel.Entity{
@@ -127,30 +127,22 @@ func Update(req *userModel.UpdateUserReq) (int, error) {
 
 // QueryPage 分页查询
 func QueryPage(req *userModel.QueryUserReq) (*base.PagingRes, error) {
-
+	// 分页查询用户信息
 	users, p, err := queryUsers(req)
 	if err != nil {
 		return nil, err
 	}
 
-	var userRoles []userRoleModel.Entity
-	var roles []roleModel.Entity
-
-	userIDs := make([]int, 0)
-	for _, v := range users {
-		userIDs = append(userIDs, v.ID)
-	}
-
+	var userRoles userRoleModel.UserRoles
+	var roles roleModel.Roles
+	//获取用户对应的关系
+	userIDs := users.ToIDs()
 	userRoles, err = roleService.QueryUserRole(userIDs)
 	if err != nil {
 		return nil, err
 	}
-
-	roleIDs := make([]int, 0)
-	for _, v := range userRoles {
-		roleIDs = append(roleIDs, v.RoleID)
-	}
-
+	//获取所有关联角色的详情
+	roleIDs := userRoles.ToRoleIDs()
 	roles, err = roleService.QueryRoles(roleIDs)
 	if err != nil {
 		return nil, err
@@ -165,12 +157,12 @@ func QueryPage(req *userModel.QueryUserReq) (*base.PagingRes, error) {
 }
 
 // buildUserRes 生成用户返回值
-func buildUserRes(users []userModel.Res, roles []roleModel.Entity, userRoles []userRoleModel.Entity) []userModel.Res {
+func buildUserRes(users userModel.Results, roles roleModel.Roles, userRoles userRoleModel.UserRoles) userModel.Results {
 	roleMap := gmap.New()
 	for _, role := range roles {
 		roleMap.Set(role.ID, role)
 	}
-	userRes := make([]userModel.Res, 0)
+	var userRes userModel.Results
 	for _, user := range users {
 		r := make([]roleModel.Entity, 0)
 		for _, userRole := range userRoles {
@@ -186,7 +178,7 @@ func buildUserRes(users []userModel.Res, roles []roleModel.Entity, userRoles []u
 }
 
 // 查询用户
-func queryUsers(req *userModel.QueryUserReq) ([]userModel.Res, *paging.Paging, error) {
+func queryUsers(req *userModel.QueryUserReq) (userModel.Results, *paging.Paging, error) {
 	var userEntity userModel.Entity
 	db := orm.Instance()
 	if req.Username != "" {
@@ -212,7 +204,7 @@ func queryUsers(req *userModel.QueryUserReq) ([]userModel.Res, *paging.Paging, e
 
 	db.OrderBy(req.OrderColumn + " " + req.OrderType + " ")
 	db.Limit(p.PageSize, p.StartNum)
-	users := make([]userModel.Res, 0)
+	var users userModel.Results
 	err = db.Table(&userEntity).Select("id , email , phone , nickname , username , enabled , created_at , updated_at").Find(&users)
 	if err != nil {
 		return nil, nil, err
@@ -223,9 +215,9 @@ func queryUsers(req *userModel.QueryUserReq) ([]userModel.Res, *paging.Paging, e
 // func queryUserRole
 
 // QueryByID 通过id查询
-func QueryByID(ID int) (*userModel.Res, error) {
+func QueryByID(ID int) (*userModel.Result, error) {
 	var userEntity userModel.Entity
-	var res userModel.Res
+	var res userModel.Result
 	db := orm.Instance()
 	if _, err := db.Table(&userEntity).ID(ID).Get(&res); err != nil {
 		return nil, err

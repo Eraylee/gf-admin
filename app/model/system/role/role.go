@@ -31,3 +31,15 @@ type UpdateRoleReq struct {
 	Enabled int    `p:"enabled"`
 	MenuIDs []int  `p:"menuIds"`
 }
+
+// Roles 角色数组
+type Roles []Entity
+
+// ToIDs 转换成id数组
+func (e *Roles) ToIDs() []int {
+	ids := make([]int, 0)
+	for _, item := range *e {
+		ids = append(ids, item.ID)
+	}
+	return ids
+}

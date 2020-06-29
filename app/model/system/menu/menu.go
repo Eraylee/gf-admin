@@ -65,3 +65,15 @@ type TreeItem struct {
 
 	Children []TreeItem `json:"children"`
 }
+
+// Menus 菜单数组
+type Menus []Entity
+
+// ToIDs 转换成id数组
+func (e *Menus) ToIDs() []int {
+	ids := make([]int, 0)
+	for _, item := range *e {
+		ids = append(ids, item.ID)
+	}
+	return ids
+}

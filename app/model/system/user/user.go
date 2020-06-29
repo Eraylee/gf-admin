@@ -49,8 +49,8 @@ type LoginReq struct {
 	Password string `p:"password"  v:"required#请输入密码"`
 }
 
-// Res 返回数据
-type Res struct {
+// Result 返回数据
+type Result struct {
 	ID        int                `json:"id" xorm:"id"` //
 	Email     string             `json:"email"`        //
 	Phone     string             `json:"phone"`        //
@@ -60,4 +60,28 @@ type Res struct {
 	Roles     []roleModel.Entity `json:"roles"`
 	CreatedAt time.Time          `json:"createdAt"` //
 	UpdatedAt time.Time          `json:"updatedAt"` //
+}
+
+// Users 用户列表
+type Users []Entity
+
+// ToIDs 转换成id数组
+func (e *Users) ToIDs() []int {
+	ids := make([]int, 0)
+	for _, item := range *e {
+		ids = append(ids, item.ID)
+	}
+	return ids
+}
+
+// Results 用户返回列表
+type Results []Result
+
+// ToIDs 转换成id数组
+func (e *Results) ToIDs() []int {
+	ids := make([]int, 0)
+	for _, item := range *e {
+		ids = append(ids, item.ID)
+	}
+	return ids
 }
