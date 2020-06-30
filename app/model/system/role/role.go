@@ -3,6 +3,7 @@ package role
 import (
 	"gf-admin/app/model/base"
 	"gf-admin/app/model/system/menu"
+	"time"
 )
 
 // QueryRoleReq 分页查询
@@ -52,8 +53,15 @@ type UpdateRoleReq struct {
 
 // Result 返回值
 type Result struct {
-	Entity
-	Menus menu.Menus `json:"menus"`
+	ID        int        `json:"id" xorm:"id BIGSERIAL pk"`
+	Name      string     `json:"name" xorm:"VARCHAR(30) notnull"`
+	Code      string     `json:"code" xorm:"VARCHAR(30) notnull"`
+	Sort      int        `json:"sort" xorm:"INT notnull"`
+	Enabled   int        `json:"enabled" xorm:"TINYINT notnull"`
+	Admin     int        `json:"admin" xorm:"TINYINT notnull"`
+	CreatedAt time.Time  `json:"createdAt" xorm:"created notnull"`
+	UpdatedAt time.Time  `json:"updatedAt" xorm:"updated notnull" `
+	Menus     menu.Menus `json:"menus"`
 }
 
 // Results 返回值集合

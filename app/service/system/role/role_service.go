@@ -266,7 +266,7 @@ func buildSingleResult(role roleModel.Result, menus menuModel.Menus, roleMenus r
 func QueryByID(ID int) (*roleModel.Result, error) {
 	var role roleModel.Result
 	db := orm.Instance()
-	if _, err := db.Table(new(roleModel.Entity)).ID(ID).Get(&role); err != nil {
+	if _, err := db.Table(new(roleModel.Entity)).Where("id = ?", ID).Select("id , name , code , sort , role , enabled, admin").Get(&role); err != nil {
 		return nil, err
 	}
 	roleMenus, err := menuService.QueryRoleMenus([]int{role.ID})
