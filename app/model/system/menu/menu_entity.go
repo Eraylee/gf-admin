@@ -13,7 +13,7 @@ type Entity struct {
 	Action    string    `json:"action" xorm:"VARCHAR(16)"`
 	Icon      string    `json:"icon" xorm:"VARCHAR(30) notnull"`
 	Type      int       `json:"type"  xorm:"TINYINT notnull"`
-	Target    string    `json:"target" xorm:"VARCHAR(30) notnull"`
+	Path      string    `json:"path" xorm:"VARCHAR(30) notnull"`
 	CreatedAt time.Time `json:"createdAt" xorm:"created notnull"`
 	UpdatedAt time.Time `json:"updatedAt" xorm:"updated notnull" `
 	DeletedAt time.Time `json:"-" xorm:"deleted"`

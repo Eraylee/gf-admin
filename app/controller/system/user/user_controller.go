@@ -34,8 +34,8 @@ func Create(r *ghttp.Request) {
 }
 
 // Update 修改
-// @Summary 创建
-// @Description 创建
+// @Summary 修改
+// @Description 修改
 // @Tags 系统 用户
 // @accept json
 // @Produce  json

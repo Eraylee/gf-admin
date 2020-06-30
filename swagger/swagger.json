@@ -149,6 +149,7 @@
                         "items": {
                             "type": "integer"
                         },
+                        "description": "删除ids",
                         "name": "ids",
                         "in": "query"
                     }
@@ -221,11 +222,13 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "是否可用",
                         "name": "enabled",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "名称",
                         "name": "name",
                         "in": "query"
                     },
@@ -260,11 +263,13 @@
                     },
                     {
                         "type": "string",
-                        "name": "target",
+                        "description": "路径",
+                        "name": "path",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "类型",
                         "name": "type",
                         "in": "query"
                     }
@@ -300,21 +305,25 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "名称",
                         "name": "name",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "name": "target",
+                        "description": "路径",
+                        "name": "path",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "description": "类型",
                         "name": "type",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "description": "是否可见",
                         "name": "visiable",
                         "in": "query"
                     }
@@ -470,6 +479,7 @@
                         "items": {
                             "type": "integer"
                         },
+                        "description": "删除ids",
                         "name": "ids",
                         "in": "query"
                     }
@@ -542,21 +552,25 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "是否超级管理",
                         "name": "admin",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "编码",
                         "name": "code",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "description": "是否可用",
                         "name": "enabled",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "姓名",
                         "name": "name",
                         "in": "query"
                     },
@@ -697,6 +711,7 @@
                         "items": {
                             "type": "integer"
                         },
+                        "description": "删除ids",
                         "name": "ids",
                         "in": "query"
                     }
@@ -769,16 +784,19 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "邮箱",
                         "name": "email",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "description": "是否启用",
                         "name": "enabled",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "昵称",
                         "name": "nickname",
                         "in": "query"
                     },
@@ -808,11 +826,13 @@
                     },
                     {
                         "type": "string",
+                        "description": "手机号",
                         "name": "phone",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "用户名",
                         "name": "username",
                         "in": "query"
                     }
@@ -871,7 +891,7 @@
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "创建",
+                "description": "修改",
                 "consumes": [
                     "application/json"
                 ],
@@ -881,7 +901,7 @@
                 "tags": [
                     "系统 用户"
                 ],
-                "summary": "创建",
+                "summary": "修改",
                 "parameters": [
                     {
                         "description": "model.SwagGroupAdd",
@@ -948,6 +968,7 @@
             "type": "object",
             "properties": {
                 "ids": {
+                    "description": "删除ids",
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -959,33 +980,42 @@
             "type": "object",
             "properties": {
                 "action": {
+                    "description": "动作",
                     "type": "string"
                 },
                 "enabled": {
+                    "description": "是否可用",
                     "type": "integer"
                 },
                 "icon": {
+                    "description": "图标",
                     "type": "string"
                 },
                 "name": {
+                    "description": "名称",
                     "type": "string"
                 },
                 "parentID": {
                     "type": "integer"
                 },
+                "path": {
+                    "description": "路径",
+                    "type": "string"
+                },
                 "permission": {
+                    "description": "权限",
                     "type": "string"
                 },
                 "sort": {
+                    "description": "排序",
                     "type": "integer"
                 },
-                "target": {
-                    "type": "string"
-                },
                 "type": {
+                    "description": "类型",
                     "type": "integer"
                 },
                 "visiable": {
+                    "description": "是否可见",
                     "type": "integer"
                 }
             }
@@ -994,9 +1024,11 @@
             "type": "object",
             "properties": {
                 "enabled": {
+                    "description": "是否可用",
                     "type": "integer"
                 },
                 "name": {
+                    "description": "名称",
                     "type": "string"
                 },
                 "orderColumn": {
@@ -1018,10 +1050,12 @@
                 "parentID": {
                     "type": "integer"
                 },
-                "target": {
+                "path": {
+                    "description": "路径",
                     "type": "string"
                 },
                 "type": {
+                    "description": "类型",
                     "type": "string"
                 }
             }
@@ -1030,15 +1064,19 @@
             "type": "object",
             "properties": {
                 "name": {
+                    "description": "名称",
                     "type": "string"
                 },
-                "target": {
+                "path": {
+                    "description": "路径",
                     "type": "string"
                 },
                 "type": {
+                    "description": "类型",
                     "type": "integer"
                 },
                 "visiable": {
+                    "description": "是否可见",
                     "type": "integer"
                 }
             }
@@ -1047,36 +1085,45 @@
             "type": "object",
             "properties": {
                 "action": {
+                    "description": "动作",
                     "type": "string"
                 },
                 "enabled": {
+                    "description": "是否可用",
                     "type": "integer"
                 },
                 "icon": {
+                    "description": "图标",
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
                 "name": {
+                    "description": "名称",
                     "type": "string"
                 },
                 "parentID": {
                     "type": "integer"
                 },
+                "path": {
+                    "description": "路径",
+                    "type": "string"
+                },
                 "permission": {
+                    "description": "权限",
                     "type": "string"
                 },
                 "sort": {
+                    "description": "排序",
                     "type": "integer"
                 },
-                "target": {
-                    "type": "string"
-                },
                 "type": {
+                    "description": "类型",
                     "type": "integer"
                 },
                 "visiable": {
+                    "description": "是否可见",
                     "type": "integer"
                 }
             }
@@ -1099,24 +1146,30 @@
             "type": "object",
             "properties": {
                 "admin": {
+                    "description": "是否超级管理",
                     "type": "integer"
                 },
                 "code": {
+                    "description": "编码",
                     "type": "string"
                 },
                 "enabled": {
+                    "description": "是否可用",
                     "type": "integer"
                 },
                 "menuIDs": {
+                    "description": "菜单ids",
                     "type": "array",
                     "items": {
                         "type": "integer"
                     }
                 },
                 "name": {
+                    "description": "姓名",
                     "type": "string"
                 },
                 "sort": {
+                    "description": "排序",
                     "type": "integer"
                 }
             }
@@ -1125,15 +1178,19 @@
             "type": "object",
             "properties": {
                 "admin": {
+                    "description": "是否超级管理",
                     "type": "integer"
                 },
                 "code": {
+                    "description": "编码",
                     "type": "string"
                 },
                 "enabled": {
+                    "description": "是否可用",
                     "type": "integer"
                 },
                 "name": {
+                    "description": "姓名",
                     "type": "string"
                 },
                 "orderColumn": {
@@ -1158,24 +1215,29 @@
             "type": "object",
             "properties": {
                 "admin": {
+                    "description": "是否超级管理",
                     "type": "integer"
                 },
                 "enabled": {
+                    "description": "是否可用",
                     "type": "integer"
                 },
                 "id": {
                     "type": "integer"
                 },
                 "menuIDs": {
+                    "description": "菜单ids",
                     "type": "array",
                     "items": {
                         "type": "integer"
                     }
                 },
                 "name": {
+                    "description": "姓名",
                     "type": "string"
                 },
                 "sort": {
+                    "description": "排序",
                     "type": "integer"
                 }
             }
@@ -1198,24 +1260,30 @@
             "type": "object",
             "properties": {
                 "email": {
+                    "description": "邮箱",
                     "type": "string"
                 },
                 "enabled": {
+                    "description": "是否启用",
                     "type": "integer"
                 },
                 "nickname": {
+                    "description": "昵称",
                     "type": "string"
                 },
                 "phone": {
+                    "description": "手机号",
                     "type": "string"
                 },
                 "roleIDs": {
+                    "description": "角色",
                     "type": "array",
                     "items": {
                         "type": "integer"
                     }
                 },
                 "username": {
+                    "description": "用户名",
                     "type": "string"
                 }
             }
@@ -1224,9 +1292,11 @@
             "type": "object",
             "properties": {
                 "password": {
+                    "description": "角色",
                     "type": "string"
                 },
                 "username": {
+                    "description": "用户名",
                     "type": "string"
                 }
             }
@@ -1235,12 +1305,15 @@
             "type": "object",
             "properties": {
                 "email": {
+                    "description": "邮箱",
                     "type": "string"
                 },
                 "enabled": {
+                    "description": "是否启用",
                     "type": "integer"
                 },
                 "nickname": {
+                    "description": "昵称",
                     "type": "string"
                 },
                 "orderColumn": {
@@ -1260,9 +1333,11 @@
                     "type": "integer"
                 },
                 "phone": {
+                    "description": "手机号",
                     "type": "string"
                 },
                 "username": {
+                    "description": "用户名",
                     "type": "string"
                 }
             }
@@ -1271,9 +1346,11 @@
             "type": "object",
             "properties": {
                 "oldPassword": {
+                    "description": "旧密码",
                     "type": "string"
                 },
                 "password": {
+                    "description": "新密码",
                     "type": "string"
                 }
             }
@@ -1282,21 +1359,26 @@
             "type": "object",
             "properties": {
                 "email": {
+                    "description": "邮箱",
                     "type": "string"
                 },
                 "enabled": {
+                    "description": "是否启用",
                     "type": "integer"
                 },
                 "id": {
                     "type": "integer"
                 },
                 "nickname": {
+                    "description": "昵称",
                     "type": "string"
                 },
                 "phone": {
+                    "description": "手机号",
                     "type": "string"
                 },
                 "roleIDs": {
+                    "description": "角色",
                     "type": "array",
                     "items": {
                         "type": "integer"

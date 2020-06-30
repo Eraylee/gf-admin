@@ -6,11 +6,13 @@ import (
 	casbinRuleModel "gf-admin/app/model/system/casbin_rule"
 	menuModel "gf-admin/app/model/system/menu"
 	roleModel "gf-admin/app/model/system/role"
-	menuRoleModel "gf-admin/app/model/system/role_menu"
+	roleMenuModel "gf-admin/app/model/system/role_menu"
 	userRoleModel "gf-admin/app/model/system/user_role"
+	menuService "gf-admin/app/service/system/menu"
 	"gf-admin/library/orm"
 	"gf-admin/library/paging"
 
+	"github.com/gogf/gf/container/gmap"
 	"github.com/gogf/gf/errors/gerror"
 )
 
@@ -22,12 +24,18 @@ func Create(req *roleModel.CreateRoleReq) (int, error) {
 	if err := session.Begin(); err != nil {
 		return 0, err
 	}
+
 	role := roleModel.Entity{
 		Name:    req.Name,
 		Code:    req.Code,
 		Sort:    req.Sort,
 		Admin:   req.Admin,
 		Enabled: req.Enabled,
+	}
+	if has, err := session.Where("code = ?", req.Code).Exist(&role); err != nil {
+		return 0, err
+	} else if has {
+		return 0, gerror.New("code已存在")
 	}
 	if _, err := session.Insert(&role); err != nil {
 		return 0, err
@@ -40,20 +48,20 @@ func Create(req *roleModel.CreateRoleReq) (int, error) {
 		}
 
 		if len(menus) > 0 {
-			menuRoles := make([]menuRoleModel.Entity, 0)
+			menuRoles := make([]roleMenuModel.Entity, 0)
 			casbinRules := make([]casbinRuleModel.Entity, 0)
 
 			for i := range menus {
 				menu := menus[i]
 
-				userRole := menuRoleModel.Entity{
+				userRole := roleMenuModel.Entity{
 					RoleID: role.ID,
 					MenuID: menu.ID,
 				}
 				casbinRule := casbinRuleModel.Entity{
 					PType: "p",
 					V0:    role.Code,
-					V1:    menu.Target,
+					V1:    menu.Path,
 					V2:    menu.Action,
 				}
 				menuRoles = append(menuRoles, userRole)
@@ -112,18 +120,18 @@ func Update(req *roleModel.UpdateRoleReq) (int, error) {
 	}
 
 	if len(req.MenuIDs) > 0 {
-		menuRoles := make([]menuRoleModel.Entity, 0)
+		menuRoles := make([]roleMenuModel.Entity, 0)
 		casbinRules := make([]casbinRuleModel.Entity, 0)
 
 		for _, menu := range menus {
-			userRole := menuRoleModel.Entity{
+			userRole := roleMenuModel.Entity{
 				RoleID: role.ID,
 				MenuID: menu.ID,
 			}
 			casbinRule := casbinRuleModel.Entity{
 				PType: "p",
 				V0:    role.Code,
-				V1:    menu.Target,
+				V1:    menu.Path,
 				V2:    menu.Action,
 			}
 			menuRoles = append(menuRoles, userRole)
@@ -131,7 +139,7 @@ func Update(req *roleModel.UpdateRoleReq) (int, error) {
 		}
 
 		if len(menuRoles) > 0 {
-			if _, err := session.Where("menu_id = ?", req.ID).Delete(new(menuRoleModel.Entity)); err != nil {
+			if _, err := session.Where("menu_id = ?", req.ID).Delete(new(roleMenuModel.Entity)); err != nil {
 				return 0, err
 			}
 			if _, err := session.Where("V0 = ?", role.Code).Delete(new(casbinRuleModel.Entity)); err != nil {
@@ -150,8 +158,36 @@ func Update(req *roleModel.UpdateRoleReq) (int, error) {
 }
 
 // QueryPage 分页查询
-func QueryPage(req *roleModel.QueryRoleReq) (roleModel.Roles, error) {
-	var userEntity roleModel.Entity
+func QueryPage(req *roleModel.QueryRoleReq) (*base.PagingRes, error) {
+	// 分页查询角色信息
+	roles, p, err := queryRoles(req)
+	if err != nil {
+		return nil, err
+	}
+	//获取角色对应的关系
+	roleIDs := roles.ToIDs()
+	roleMenus, err := menuService.QueryRoleMenus(roleIDs)
+	if err != nil {
+		return nil, err
+	}
+	//获取所有关联菜单的详情
+	menuIDs := roleMenus.ToMenuIDs()
+	menus, err := menuService.QueryMenus(menuIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	res := buildResults(roles, menus, roleMenus)
+
+	return &base.PagingRes{
+		Data:   res,
+		Paging: p,
+	}, err
+}
+
+// queryRoles 查询角色
+func queryRoles(req *roleModel.QueryRoleReq) (roleModel.Results, *paging.Paging, error) {
+	var role roleModel.Entity
 	//  orderColumn , orderType :=  "created_at" , ""
 	db := orm.Instance()
 
@@ -171,10 +207,10 @@ func QueryPage(req *roleModel.QueryRoleReq) (roleModel.Roles, error) {
 		db.Where("admin = ?", req.Admin)
 	}
 
-	total, err := db.Count(&userEntity)
+	total, err := db.Count(&role)
 
 	if err != nil {
-		return nil, errors.New("读取行数失败")
+		return nil, nil, errors.New("读取行数失败")
 	}
 
 	p := paging.Create(req.PageNum, req.PageSize, int(total))
@@ -183,19 +219,67 @@ func QueryPage(req *roleModel.QueryRoleReq) (roleModel.Roles, error) {
 
 	db.Limit(p.PageSize, p.StartNum)
 
-	var roles roleModel.Roles
-	err = db.Table(&userEntity).Find(&roles)
-	return roles, err
+	roles := make(roleModel.Results, 0)
+	err = db.Table(&role).Find(&roles)
+	return roles, p, err
+}
+
+// buildResults 生成用户返回值
+func buildResults(roles roleModel.Results, menus menuModel.Menus, roleMenus roleMenuModel.RoleMenus) roleModel.Results {
+	menuMap := gmap.New()
+	for _, role := range menus {
+		menuMap.Set(role.ID, role)
+	}
+	roleRes := make(roleModel.Results, 0)
+	for _, role := range roles {
+		m := make(menuModel.Menus, 0)
+		for _, roleMenu := range roleMenus {
+			if role.ID == roleMenu.RoleID {
+				menu := menuMap.Get(roleMenu.MenuID).(menuModel.Entity)
+				m = append(m, menu)
+			}
+		}
+		role.Menus = m
+		roleRes = append(roleRes, role)
+	}
+	return roleRes
+}
+
+// buildSingleResult 生成单用户数据
+func buildSingleResult(role roleModel.Result, menus menuModel.Menus, roleMenus roleMenuModel.RoleMenus) roleModel.Result {
+	menuMap := gmap.New()
+	for _, role := range menus {
+		menuMap.Set(role.ID, role)
+	}
+	m := make(menuModel.Menus, 0)
+	for _, roleMenu := range roleMenus {
+		if role.ID == roleMenu.RoleID {
+			menu := menuMap.Get(roleMenu.MenuID).(menuModel.Entity)
+			m = append(m, menu)
+		}
+	}
+	role.Menus = m
+	return role
 }
 
 // QueryByID 通过id查询
-func QueryByID(ID int) (*roleModel.Entity, error) {
-	var role roleModel.Entity
+func QueryByID(ID int) (*roleModel.Result, error) {
+	var role roleModel.Result
 	db := orm.Instance()
-	if _, err := db.ID(ID).Get(&role); err != nil {
+	if _, err := db.Table(new(roleModel.Entity)).ID(ID).Get(&role); err != nil {
 		return nil, err
 	}
-	return &role, nil
+	roleMenus, err := menuService.QueryRoleMenus([]int{role.ID})
+	if err != nil {
+		return nil, err
+	}
+	menuIDs := roleMenus.ToMenuIDs()
+	menus, err := menuService.QueryMenus(menuIDs)
+	if err != nil {
+		return nil, err
+	}
+	res := buildSingleResult(role, menus, roleMenus)
+	return &res, nil
 }
 
 // Delete 删除

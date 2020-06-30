@@ -5,7 +5,7 @@ import (
 	casbinRuleModel "gf-admin/app/model/system/casbin_rule"
 	menuModel "gf-admin/app/model/system/menu"
 	roleModel "gf-admin/app/model/system/role"
-	menuRoleModel "gf-admin/app/model/system/role_menu"
+	roleMenuModel "gf-admin/app/model/system/role_menu"
 	"gf-admin/library/orm"
 	"gf-admin/library/paging"
 
@@ -23,7 +23,7 @@ func Create(req *menuModel.CreateMenuReq) (int, error) {
 		ParentID: req.ParentID,
 		Icon:     req.Icon,
 		Type:     req.Type,
-		Target:   req.Target,
+		Path:     req.Path,
 	}
 
 	if _, err := db.Insert(&menu); err != nil {
@@ -47,8 +47,8 @@ func Update(req *menuModel.UpdateMenuReq) (int, error) {
 	if req.Name != "" {
 		menu.Name = req.Name
 	}
-	if req.Target != "" {
-		menu.Target = req.Target
+	if req.Path != "" {
+		menu.Path = req.Path
 	}
 	if req.Type != 0 {
 		menu.Type = req.Type
@@ -130,7 +130,7 @@ func Delete(req *base.DeleteReq) (int64, error) {
 }
 
 // QueryTree 查询菜单树
-func QueryTree(req *menuModel.QueryTreeReq) ([]menuModel.TreeItem, error) {
+func QueryTree(req *menuModel.QueryTreeReq) (menuModel.Tree, error) {
 	var menu menuModel.Entity
 	//  orderColumn , orderType :=  "created_at" , ""
 	db := orm.Instance().Table(&menu)
@@ -149,42 +149,38 @@ func QueryTree(req *menuModel.QueryTreeReq) ([]menuModel.TreeItem, error) {
 
 	db.Select("id , name , type , visiable ,  action , icon , type ,target ,parent_id ")
 
-	res := make([]menuModel.Entity, 0)
-	if err := db.Find(&res); err != nil {
+	menus := make(menuModel.Menus, 0)
+	if err := db.Find(&menus); err != nil {
 		return nil, err
 	}
 
-	return getTree(res, 0), nil
+	return menus.GetTree(menus, 0), nil
 
 }
 
-// getTree 获取树节点
-func getTree(data menuModel.Menus, ID int) []menuModel.TreeItem {
-	tree := make([]menuModel.TreeItem, 0)
-	for _, v := range data {
-		if v.ParentID != ID {
-			continue
-		}
-		children := getTree(data, v.ID)
-		item := menuModel.TreeItem{
-			ID:       v.ID,
-			Name:     v.Name,
-			Sort:     v.Sort,
-			Visiable: v.Visiable,
-			Action:   v.Action,
-			Icon:     v.Icon,
-			Type:     v.Type,
-			Target:   v.Target,
-			Children: children,
-		}
-		tree = append(tree, item)
+//QueryRoleMenus 查询菜单角色关系
+func QueryRoleMenus(roleIDs []int) (roleMenuModel.RoleMenus, error) {
+	db := orm.Instance()
+	roleMenus := make(roleMenuModel.RoleMenus, 0)
+	if err := db.Table(new(roleMenuModel.Entity)).In("role_id", roleIDs).Find(&roleMenus); err != nil {
+		return nil, err
 	}
-	return tree
+	return roleMenus, nil
+}
+
+// QueryMenus 查询菜单
+func QueryMenus(menuIDs []int) (menuModel.Menus, error) {
+	db := orm.Instance()
+	menus := make(menuModel.Menus, 0)
+	if err := db.Table(new(menuModel.Entity)).In("id", menuIDs).Find(&menus); err != nil {
+		return nil, err
+	}
+	return menus, nil
 }
 
 // CancelConnectByMenuID 取消关联
-func CancelConnectByMenuID(req *menuRoleModel.CancelConnectReq) (bool, error) {
-	var menuRole menuRoleModel.Entity
+func CancelConnectByMenuID(req *roleMenuModel.CancelConnectReq) (bool, error) {
+	var menuRole roleMenuModel.Entity
 	session := orm.Instance().NewSession()
 	if err := session.Begin(); err != nil {
 		return false, err
@@ -192,7 +188,7 @@ func CancelConnectByMenuID(req *menuRoleModel.CancelConnectReq) (bool, error) {
 	defer session.Close()
 
 	var role roleModel.Entity
-	if has, err := session.Where("role_id = ?", req.RoleID).Get(&role); err != nil {
+	if has, err := session.ID(req.RoleID).Get(&role); err != nil {
 		return false, err
 	} else if !has {
 		return false, gerror.New("角色不存在")
@@ -207,7 +203,8 @@ func CancelConnectByMenuID(req *menuRoleModel.CancelConnectReq) (bool, error) {
 	if _, err := session.In("menu_id", req.MenuIDs).And("role_id = ?", req.RoleID).Delete(&menuRole); err != nil {
 		return false, err
 	}
-	if _, err := session.In("v1", menus.ToIDs).And("V0 = ?", role.Code).Delete(new(casbinRuleModel.Entity)); err != nil {
+	paths := menus.ToPaths()
+	if _, err := session.In("v1", paths).And("V0 = ?", role.Code).Delete(new(casbinRuleModel.Entity)); err != nil {
 		return false, err
 	}
 	return true, session.Commit()

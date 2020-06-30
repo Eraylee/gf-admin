@@ -38,9 +38,9 @@ func Create(req *userModel.CreateUserReq) (int, error) {
 		Password: gmd5.MustEncryptString(password),
 	}
 
-	if total, err := session.Table(&user).Where("username = ?", user.Username).Count(); err != nil {
+	if has, err := session.Where("username = ?", user.Username).Exist(&user); err != nil {
 		return 0, err
-	} else if total > 0 {
+	} else if has {
 		return 0, gerror.New("用户名已存在")
 	}
 
@@ -178,7 +178,7 @@ func buildResults(users userModel.Results, roles roleModel.Roles, userRoles user
 	}
 	userRes := make(userModel.Results, 0)
 	for _, user := range users {
-		r := make([]roleModel.Entity, 0)
+		r := make(roleModel.Roles, 0)
 		for _, userRole := range userRoles {
 			if user.ID == userRole.UserID {
 				role := roleMap.Get(userRole.RoleID).(roleModel.Entity)
