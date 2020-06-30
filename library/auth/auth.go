@@ -92,7 +92,6 @@ func RefreshResponse(r *ghttp.Request, code int, token string, expire time.Time)
 // @Param data body user.LoginReq true "model.SwagGroupAdd"
 // @Success 200 {object} response.Response
 // @Router /system/login [post]
-// @Security ApiKeyAuth
 func Authenticator(r *ghttp.Request) (interface{}, error) {
 	var req *userModel.LoginReq
 	if err := r.Parse(&req); err != nil {
