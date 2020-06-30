@@ -5,6 +5,7 @@ import (
 	"gf-admin/app/controller/system/role"
 	"gf-admin/app/controller/system/user"
 	"gf-admin/library/auth"
+	"gf-admin/library/permission"
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
@@ -16,7 +17,8 @@ func init() {
 	s.Group("/system", func(g *ghttp.RouterGroup) {
 
 		g.POST("/login", auth.GfJWTMiddleware.LoginHandler)
-		// g.Middleware(auth.MiddlewareAuth)
+		g.Middleware(auth.Middleware)
+		g.Middleware(permission.Middleware)
 		g.ALL("/refreshToken", auth.GfJWTMiddleware.RefreshHandler)
 
 		g.Group("/user", func(g *ghttp.RouterGroup) {

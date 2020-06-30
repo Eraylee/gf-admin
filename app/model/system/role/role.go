@@ -87,3 +87,12 @@ func (e *Results) ToIDs() []int {
 	}
 	return ids
 }
+
+// ToCodes 转换成code数组
+func (e *Roles) ToCodes() []string {
+	codes := make([]string, 0)
+	for _, item := range *e {
+		codes = append(codes, item.Code)
+	}
+	return codes
+}

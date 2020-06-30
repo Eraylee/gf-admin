@@ -73,15 +73,15 @@ type LoginReq struct {
 
 // Result 返回数据
 type Result struct {
-	ID        int                `json:"id" xorm:"id"` //
-	Email     string             `json:"email"`        //
-	Phone     string             `json:"phone"`        //
-	Nickname  string             `json:"nickname"`     //
-	Enabled   int                `json:"enabled"`      //
-	Username  string             `json:"username"`     //
-	Roles     []roleModel.Entity `json:"roles"`
-	CreatedAt time.Time          `json:"createdAt"` //
-	UpdatedAt time.Time          `json:"updatedAt"` //
+	ID        int             `json:"id" xorm:"id"` //
+	Email     string          `json:"email"`        //
+	Phone     string          `json:"phone"`        //
+	Nickname  string          `json:"nickname"`     //
+	Enabled   int             `json:"enabled"`      //
+	Username  string          `json:"username"`     //
+	Roles     roleModel.Roles `json:"roles"`
+	CreatedAt time.Time       `json:"createdAt"` //
+	UpdatedAt time.Time       `json:"updatedAt"` //
 }
 
 // Users 用户列表

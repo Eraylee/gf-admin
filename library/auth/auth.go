@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"fmt"
 	userModel "gf-admin/app/model/system/user"
+	userService "gf-admin/app/service/system/user"
 	"gf-admin/library/orm"
 	"gf-admin/library/response"
 	"time"
@@ -53,14 +53,9 @@ func init() {
 // The attributes mentioned on jwt.io can't be used as keys for the map.
 // Optional, by default no additional data will be set.
 func PayloadFunc(data interface{}) jwt.MapClaims {
-	claims := jwt.MapClaims{}
-	params := data.(map[string]interface{})
-	if len(params) > 0 {
-		for k, v := range params {
-			claims[k] = v
-		}
-	}
-	return claims
+	// claims := jwt.MapClaims{}
+	params := data.(jwt.MapClaims)
+	return params
 }
 
 // IdentityHandler sets the identity for JWT.
@@ -81,8 +76,7 @@ func LoginResponse(r *ghttp.Request, code int, token string, expire time.Time) {
 
 // RefreshResponse is used to get a new token no matter current token is expired or not.
 func RefreshResponse(r *ghttp.Request, code int, token string, expire time.Time) {
-	u := r.Get("JWT_PAYLOAD")
-	fmt.Printf("user is     %s \n", u)
+	_ = r.Get("JWT_PAYLOAD")
 	response.Res(r).Success(token)
 }
 
@@ -119,15 +113,21 @@ func Authenticator(r *ghttp.Request) (interface{}, error) {
 		return nil, gerror.New("用户名或密码错误")
 	}
 
-	return g.Map{
-		"username": user.Username,
-		"id":       user.ID,
+	u, err := userService.QueryByID(user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return jwt.MapClaims{
+		"username":  u.Username,
+		"id":        u.ID,
+		"roleCodes": u.Roles.ToCodes(),
 	}, nil
 
 }
 
-// MiddlewareAuth is the HOOK function implements JWT logistics.
-func MiddlewareAuth(r *ghttp.Request) {
+// Middleware is the HOOK function implements JWT logistics.
+func Middleware(r *ghttp.Request) {
 	GfJWTMiddleware.MiddlewareFunc()(r)
 	r.Middleware.Next()
 }

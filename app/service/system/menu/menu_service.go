@@ -17,6 +17,7 @@ func Create(req *menuModel.CreateMenuReq) (int, error) {
 	db := orm.Instance()
 	menu := menuModel.Entity{
 		Name:     req.Name,
+		Action:   req.Action,
 		Sort:     req.Sort,
 		Enabled:  req.Enabled,
 		Visiable: req.Visiable,
@@ -46,6 +47,9 @@ func Update(req *menuModel.UpdateMenuReq) (int, error) {
 
 	if req.Name != "" {
 		menu.Name = req.Name
+	}
+	if req.Action != "" {
+		menu.Action = req.Action
 	}
 	if req.Path != "" {
 		menu.Path = req.Path
