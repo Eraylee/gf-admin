@@ -39,25 +39,36 @@ func (a *AppRes) Success(data interface{}) {
 
 // BadRequest 错误请求
 func (a *AppRes) BadRequest(message string) {
+	// logError(a, BAD_REQUEST, message)
 	a.response(BAD_REQUEST, message, nil)
 }
 
 // NotFound 404
 func (a *AppRes) NotFound() {
+	// logError(a, NOT_FOUND, http.StatusText(http.StatusNotFound))
 	a.response(NOT_FOUND, http.StatusText(http.StatusNotFound), nil)
 }
 
-// InternalServerError 400
+// InternalServerError 500
 func (a *AppRes) InternalServerError(message string) {
+	// logError(a, INTERNAL_SERVER_ERROR, message)
 	a.response(INTERNAL_SERVER_ERROR, message, nil)
 }
 
 // Unauthorized 401
 func (a *AppRes) Unauthorized(message string) {
+	// logError(a, UNAUTHORIZED, message)
 	a.response(UNAUTHORIZED, message, nil)
 }
 
 // Forbidden 403
 func (a *AppRes) Forbidden(message string) {
+	// logError(a, FORBIDDEN, message)
 	a.response(FORBIDDEN, message, nil)
 }
+
+// func logError(a *AppRes, code int, message string) {
+// 	url := a.r.URL
+// 	method := a.r.Method
+// 	g.Log().Infof("请求失败 url:%s,method:%s,code:%d,error:%s", url, method, code, message)
+// }

@@ -2,7 +2,6 @@ package orm
 
 import (
 	"fmt"
-	"log"
 
 	menuModel "gf-admin/app/model/system/menu"
 	roleModel "gf-admin/app/model/system/role"
@@ -11,6 +10,7 @@ import (
 	userRole "gf-admin/app/model/system/user_role"
 
 	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/os/glog"
 	_ "github.com/lib/pq"
 	"xorm.io/xorm"
 )
@@ -18,6 +18,7 @@ import (
 var engine *xorm.Engine
 
 func init() {
+
 	var err error
 	pgsqlStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		g.Cfg().GetString("database.host"),
@@ -28,12 +29,12 @@ func init() {
 
 	engine, err = xorm.NewEngine("postgres", pgsqlStr)
 	if err != nil {
-		log.Printf("数据库连接错误:%v \n", err.Error())
+		glog.Error("数据库连接错误:%v \n", err.Error())
 		return
 	}
 	err = engine.Ping()
 	if err != nil {
-		log.Printf("数据库连接错误:%v \n", err.Error())
+		glog.Error("数据库连接错误:%v \n", err.Error())
 		return
 	}
 	err = engine.Sync2(
@@ -43,7 +44,7 @@ func init() {
 		new(menuRoleModel.Entity),
 		new(userRole.Entity))
 	if err != nil {
-		log.Printf("同步数据库错误:%v \n", err.Error())
+		glog.Error("同步数据库错误:%v \n", err.Error())
 		return
 	}
 	engine.ShowSQL(true)

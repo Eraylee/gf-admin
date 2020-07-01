@@ -162,6 +162,8 @@ func QueryTree(req *menuModel.QueryTreeReq) (menuModel.Tree, error) {
 
 }
 
+// func QueryTreeBy
+
 //QueryRoleMenus 查询菜单角色关系
 func QueryRoleMenus(roleIDs []int) (roleMenuModel.RoleMenus, error) {
 	db := orm.Instance()

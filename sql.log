@@ -1,0 +1,17 @@
+[xorm] [info]  2020/07/01 16:33:04.423615 [SQL] SELECT tablename FROM pg_tables WHERE schemaname = $1 [public] - 1.0572ms
+[xorm] [info]  2020/07/01 16:33:04.429626 [SQL] SELECT column_name, column_default, is_nullable, data_type, character_maximum_length,
+    CASE WHEN p.contype = 'p' THEN true ELSE false END AS primarykey,
+    CASE WHEN p.contype = 'u' THEN true ELSE false END AS uniquekey
+FROM pg_attribute f
+    JOIN pg_class c ON c.oid = f.attrelid JOIN pg_type t ON t.oid = f.atttypid
+    LEFT JOIN pg_attrdef d ON d.adrelid = c.oid AND d.adnum = f.attnum
+    LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
+    LEFT JOIN pg_constraint p ON p.conrelid = c.oid AND f.attnum = ANY (p.conkey)
+    LEFT JOIN pg_class AS g ON p.confrelid = g.oid
+    LEFT JOIN INFORMATION_SCHEMA.COLUMNS s ON s.column_name=f.attname AND c.relname=s.table_name
+WHERE n.nspname= s.table_schema AND c.relkind = 'r'::char AND c.relname = $1AND s.table_schema = $2 AND f.attnum > 0 ORDER BY f.attnum; [casbin_rule public] - 6.0112ms
+[xorm] [info]  2020/07/01 16:33:04.431622 [SQL] SELECT indexname, indexdef FROM pg_indexes WHERE tablename=$1 AND schemaname=$2 [casbin_rule public] - 1.9958ms
+[xorm] [info]  2020/07/01 16:33:04.435585 [SQL] SELECT "p_type", "v0", "v1", "v2", "v3", "v4", "v5" FROM "casbin_rule" [] - 2.9685ms
+[xorm] [info]  2020/07/01 16:33:04.435585 [SQL] SELECT "p_type", "v0", "v1", "v2", "v3", "v4", "v5" FROM "casbin_rule" []
+[xorm] [info]  2020/07/01 16:33:07.348591 [SQL] SELECT "id", "email", "phone", "nickname", "enabled", "username", "salt", "password", "login_i_p", "login_date", "created_at", "updated_at", "deleted_at" FROM "user" WHERE (username = $1) AND (deleted_at=$2 OR deleted_at IS NULL) LIMIT 1 [admin 0001-01-01 00:00:00] - 999.2µs
+[xorm] [info]  2020/07/01 16:33:34.739938 [SQL] SELECT "id", "email", "phone", "nickname", "enabled", "username", "salt", "password", "login_i_p", "login_date", "created_at", "updated_at", "deleted_at" FROM "user" WHERE (username = $1) AND (deleted_at=$2 OR deleted_at IS NULL) LIMIT 1 [admin 0001-01-01 00:00:00] - 995.2µs
